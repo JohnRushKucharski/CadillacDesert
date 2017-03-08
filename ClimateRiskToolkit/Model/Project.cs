@@ -8,6 +8,7 @@ namespace ClimateRiskToolkit.Model
 {
     public class Project
     {
+        //just a comment.
         #region Fields
         private static Project _Instance;
         private string _ProjectFolderPath;
