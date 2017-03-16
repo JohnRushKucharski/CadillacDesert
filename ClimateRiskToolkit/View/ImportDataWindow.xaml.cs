@@ -22,11 +22,15 @@ namespace ClimateRiskToolkit.View
         public ImportDataWindow()
         {
             InitializeComponent();
-        }
+            this.btnLoadDataRecord.Click += (o, e) => ((ViewModel.SingleDataRecordVM)this.Resources["SingleDataRecordVM"]).ImportDataCommand.Action(o, e);
 
-        private void btnLoadPrecipitationData_Click(object sender, RoutedEventArgs e)
-        {
+            //ViewModel.SingleDataRecordVM record = (ViewModel.SingleDataRecordVM)this.Resources["SingleDataRecordVM"];
+            //ViewModel.NamedAction action = record.ImportDataCommand;
 
+
+            //ViewModel.NamedAction action = ((ViewModel.SingleDataRecordVM)this.Resources["SingleDataRecordVM"]).ImportDataCommand;
+            //System.Windows.Controls.Button button = this.btnLoadDataRecord;
+            //button.Click += (o, e) => action.Action(o, e);
         }
     }
 }

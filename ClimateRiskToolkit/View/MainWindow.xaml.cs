@@ -26,10 +26,10 @@ namespace ClimateRiskToolkit.View
             InitializeComponent();
         }
 
-        private void btnLoadPrecipitationData_Click(object sender, RoutedEventArgs e)
+        private void btnImportDataRecord_Click(object sender, RoutedEventArgs e)
         {
-            ImportDataWindow importDataWindow = new ImportDataWindow();
-            importDataWindow.Show();
+            ImportDataWindow importDataRecordWindow = new ImportDataWindow();
+            importDataRecordWindow.Show();
         }
     }
 }

@@ -42,14 +42,21 @@ namespace ClimateRiskToolkit.ViewModel
         #endregion
 
 
+
         #region Constructor
         public NamedAction(string actionName)
         {
             Name = actionName;
             Action = delegate (object sender, EventArgs e)
             {
+                System.Diagnostics.Debug.WriteLine("This worked.");
             };
         }
         #endregion
+
+        public void Execute(object o)
+        {
+            
+        }
     }
 }

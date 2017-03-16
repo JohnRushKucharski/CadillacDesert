@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ClimateRiskToolkit.Model.Utilities
+namespace ClimateRiskToolkit.ViewModel.Utilities
 {
     public static class TextDataImporter
     {

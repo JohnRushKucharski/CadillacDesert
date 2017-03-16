@@ -24,6 +24,8 @@ namespace ClimateRiskToolkit.ViewModel
         }
         #endregion
 
+        #region Voids
+        #endregion
 
         #region INotifyPropertyChangedMembers
         public event PropertyChangedEventHandler PropertyChanged;

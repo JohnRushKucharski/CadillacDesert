@@ -7,7 +7,7 @@
         xmlns:ConsequencesAssist="clr-namespace:Consequences_Assist.Controls;assembly=Consequences_Assist"
         xmlns:local="clr-namespace:ClimateRiskToolkit.View"
         mc:Ignorable="d"
-        Title="ImportDataWindow" Height="300" Width="300">
+        Title="ImportDataWindow" Height="300" Width="800">
     <Window.Resources>
         <ViewModels:SingleDataRecordVM x:Key="SingleDataRecordVM"/>
     </Window.Resources>
@@ -15,21 +15,36 @@
     
     <Grid DataContext="{StaticResource SingleDataRecordVM}">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="110"/>
+            <ColumnDefinition Width="175"/>
+            <ColumnDefinition Width="200"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
         <Grid.RowDefinitions>
             <RowDefinition Height="35"/>
             <RowDefinition Height="35"/>
-            <RowDefinition Height="50"/>
+            <RowDefinition Height="35"/>
+            <RowDefinition Height="35"/>
+            <RowDefinition Height="35"/>
+            <RowDefinition Height="35"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <Label Name="lblFilePath" Content="Project Folder Path:" Grid.Column="0" Grid.Row="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
-        <ConsequencesAssist:TextBoxFileBrowser Name="txtBoxDataFileBrowser" Title="Select your data file." Text="{Binding ProjectSingleton.Instance.FolderPath}" FileExists="False" Filter="TextFiles (*.txt) |*.txt" displaypath="True" Grid.Column="1" Grid.Row="0" Margin="5"/>
+        <Label Name="lblFilePath" Content="Data File Path:" Grid.Column="0" Grid.Row="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+        <ConsequencesAssist:TextBoxFolderBrowser Name="txtBoxDataFolderBrowser" Title="Select your data file." Text="{Binding T}" FileExists="False" Filter="TextFiles (*.txt) |*.txt" displaypath="True" Grid.Column="1" Grid.ColumnSpan="2" Grid.Row="0" Margin="5"/>
+
         <Label Name="lblDataLabel" Content="Data Label:" Grid.Column="0" Grid.Row="1" HorizontalAlignment="Right" VerticalAlignment="Center"/>
-        <TextBox Name="txtBoxDataLabel" Text="{Binding DataLabel}" Grid.Column="1" Grid.Row="1" Margin="5"/>
-        <Button Name="btnLoadPrecipitationData" Content="Load Precipitation Data" Grid.ColumnSpan="2" Grid.Row="2" Margin="5" Click="btnLoadPrecipitationData_Click"/>
+        <TextBox Name="txtBoxDataLabel" Text="{Binding Path=DataLabel}" Grid.Column="1" Grid.Row="1" Grid.ColumnSpan="2" Margin="5"/>
+
+        <Label Name="lblYearColumn" Content="Year Column:" Grid.Column="1" Grid.Row="2" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+        <ComboBox Name="cmbBoxYearColumn" ItemsSource="{Binding Path=ColumnDataHeaders}" SelectedItem="{Binding SelectedColumnHeaders[0]}" IsReadOnly="True" Grid.Column="2" Grid.Row="2" Margin="5" VerticalAlignment="Center"/>
+
+        <Label Name="lblMonthColumn" Content="Month Column:" Grid.Column="1" Grid.Row="3" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+        <ComboBox Name="cmbBoxMonthColumn" ItemsSource="{Binding Path=ColumnDataHeaders}" SelectedItem="{Binding SelectedColumnHeaders[0]}" IsReadOnly="True" Grid.Column="2" Grid.Row="3" Margin="5" VerticalAlignment="Center"/>
+
+        <Label Name="lblDataColumnHeaders" Content="Data Columns to Import:" Grid.Column="0" Grid.Row="5" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+        <ComboBox Name="cmbBoxDatColumnHeaders" ItemsSource="{Binding Path=ColumnDataHeaders}" SelectedItem="{Binding SelectedColumnHeaders[0]}" IsReadOnly="True" Grid.Column="1" Grid.Row="5" Margin="5" VerticalAlignment="Center"/>
+
+        <Button Name="btnLoadDataRecord" Content="{Binding Path=ImportDataCommand.Name}" Grid.ColumnSpan="2" Grid.Row="4" Margin="5" />
     </Grid>
 </Window>
