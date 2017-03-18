@@ -1,0 +1,52 @@
+﻿<Window x:Class="SystemBasedPerformance.View.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:ViewModels="clr-namespace:SystemBasedPerformance.ViewModel"
+        xmlns:ConsequencesAssist="clr-namespace:Consequences_Assist.Controls;assembly=Consequences_Assist"
+
+        xmlns:local="clr-namespace:SystemBasedPerformance.View"
+        mc:Ignorable="d"
+        Title="System Based Performance Tools" Height="350" Width="600">
+    
+    <Window.Resources>
+        <ViewModels:WatershedViewModel x:Key="WatershedVM"/>
+    </Window.Resources>
+
+
+    <Grid DataContext="{StaticResource ResourceKey=WatershedVM}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="40"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <Grid Grid.Row="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="240"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Label Content="Watershed Alternatives Directories Folder:" VerticalAlignment="Center"/>
+            <ConsequencesAssist:TextBoxFolderBrowser Grid.Column="1" Name="tbfbCleanAlternativeDirectories" FolderPath="{Binding Path=WatershedFolderPath, Mode=TwoWay}" VerticalAlignment="Center" Margin="5"/>
+        </Grid>
+        
+       
+        <Grid Grid.Row="1" Background="Salmon">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="35"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <TextBlock Grid.Row="0" Name="txtBlockCleanDirectories" TextWrapping="WrapWithOverflow" VerticalAlignment="Top" FontSize="12" Background="Salmon" >
+                <Run Text="Warning:" FontSize="13" FontWeight="Bold" />
+                clicking the Clean Alternative Directories button below deletes all HEC-HMS, HEC-ResSIM and HEC-RAS event files...
+            </TextBlock>
+            <Button Grid.Row="1" Name="btnCleanAlternativeDirectories" Content="{Binding Path=CleanWatershedDirectory.Name}" IsEnabled="{Binding Path=CleanWatershedDirectory.IsEnabled}" Margin="5"/>
+        </Grid>
+
+
+
+        <Button Grid.Row="2" Name="btnGenerateResultsFiles" Content="{Binding Path=CompileWatershedResults.Name}" IsEnabled="{Binding Path=CompileWatershedResults.IsEnabled}" Margin="5" />
+    </Grid>
+</Window>

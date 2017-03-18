@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using DataBase_Reader;
 
-namespace SystemBasedPerformance
+namespace SystemBasedPerformance.Model
 {
     public class Event
     {
