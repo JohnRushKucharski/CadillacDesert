@@ -13,6 +13,7 @@ namespace SystemBasedPerformance.Model
         private System.IO.DirectoryInfo _FileDirectory;
         private Event[] _Events;
         private List<Tuple<string, double>> _Metrics;
+        private List<string> _Errors;
         #endregion
 
         #region Properties
@@ -60,6 +61,17 @@ namespace SystemBasedPerformance.Model
                 _Metrics = value;
             }
         }
+        public List<string> Errors
+        {
+            get
+            {
+                return _Errors;
+            }
+            set
+            {
+                _Errors = value;
+            }
+        }
         #endregion
 
         #region Constructors
@@ -84,7 +96,8 @@ namespace SystemBasedPerformance.Model
                     }
                 }
                 Events[eventNumber - 1] = new Event(eventDirectory);
-            }      
+            }
+                  
         }
         #endregion
 
@@ -151,9 +164,10 @@ namespace SystemBasedPerformance.Model
                     metricValues.Add(eventValues);
                 }
             }
+            ReportErrors(metricsNames, metricValues);
+
             eventColumns.Add("ExpectedValue");
             metricValues.Add(CalculatedExpectedValue(metricsNames, metricValues));
-
             object[][] dataToExport = new object[Events.Length + 2][];
             for (int i = 0; i < metricValues.Count; i++)
             {
@@ -163,7 +177,7 @@ namespace SystemBasedPerformance.Model
                 }
                 dataToExport[i + 1] = metricValues[i].Cast<object>().ToArray();
             }
-            ExportDelimitedColumns(exportAlternativeDataFilePath, dataToExport, eventColumns.ToArray());
+            Utilities.TextDataExporter.ExportDelimitedColumns(exportAlternativeDataFilePath, dataToExport, eventColumns.ToArray());
         }
 
         public List<double> CalculatedExpectedValue(List<string> metricNames, List<List<double>> metricValues)
@@ -183,44 +197,45 @@ namespace SystemBasedPerformance.Model
             return expectedValue;
         }
 
-        public void ExportDelimitedColumns(string fullFilePath, object[][] exportData, string[] exportColumnNames, char delimiter = '\t')
-        {
-            using (System.IO.StreamWriter writer = new System.IO.StreamWriter(new System.IO.FileStream(fullFilePath, System.IO.FileMode.Create)))
-            {
-                //1. Find longest sublist
-                int n = 0;
-                for (int k = 0; k < exportData.Length; k++)
-                {
-                    if (exportData[k].Length > n)
-                    {
-                        n = exportData[k].Length;
-                    }
-                }
-                //2. Column Names
-                for (int s = 0; s < exportColumnNames.Length; s++)
-                {
-                    writer.Write(exportColumnNames[s]);
-                    writer.Write(delimiter);
-                }
-                writer.WriteLine();
 
-                //3. Loop across sublist elements
-                for (int j = 0; j < n; j++)
+        #endregion
+
+        #region Voids
+        public void ReportErrors(List<string> metricNames, List<List<double>> metricValues)
+        {
+            Errors = new List<string> { "ALTERNATIVE => " + Name.ToUpper()};
+            for (int i = 0; i < metricValues[0].Count; i++)
+            {
+                Errors.Add((i + 1) + ". " + metricNames[i].ToUpper() + ":");
+                if (metricValues[0][i] == double.NaN)
                 {
-                    //4. Loop across list number
-                    for (int i = 0; i < exportData.Length; i++)
+                    Errors.Add("- A double.NaN value was recorded for event 1.");
+                }
+
+                double previousValue;
+                for (int j = 1; j < metricValues.Count; j++)
+                {
+                    if (metricValues[j][i] == double.NaN)
                     {
-                        if (j < exportData[i].Length)
+                        Errors.Add("- A double.NaN value was recorded for event " + (j + 1) + ".");
+                    }
+                    else
+                    {
+                        if (metricValues[j - 1][i] == double.NaN)
                         {
-                            writer.Write(exportData[i][j]);
-                            writer.Write(delimiter);
+                            continue;
                         }
                         else
                         {
-                            writer.Write(delimiter);
+                            previousValue = metricValues[j - 1][i];
+                            if (previousValue > metricValues[j][i])
+                            {
+                                Errors.Add("- The " + metricNames[i] + " metric value is not monotonically increasing around event " + (j + 1) + ". " +
+                                           "The value for event " + (j) + " is " + metricValues[j - 1][i] + ". " +
+                                           "The value for event " + (j + 1) + "is " + metricValues[j][i] + ".");
+                            }
                         }
                     }
-                    writer.WriteLine();
                 }
             }
         }

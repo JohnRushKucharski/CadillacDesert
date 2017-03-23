@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Concurrent;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace SystemBasedPerformance.ViewModel
@@ -99,27 +101,52 @@ namespace SystemBasedPerformance.ViewModel
             CleanWatershedDirectory.Name = "The Watershed Alternatives Directory has been Cleaned.";
         }
 
+        //public void CompileResults(object sender, EventArgs e)
+        //{
+        //    CompileWatershedResults.IsEnabled = false;
+        //    CompileWatershedResults.Name = "Please be patient I'm working...";
+
+        //    List<string> AlternativesDirectories = new List<string>();
+        //    List<string> ExportAlternativeDataFilePath = new List<string>();
+        //    System.IO.DirectoryInfo watershedDirectory = new System.IO.DirectoryInfo(WatershedFolderPath);
+        //    foreach (System.IO.DirectoryInfo alternativePath in watershedDirectory.GetDirectories())
+        //    {
+        //        AlternativesDirectories.Add(alternativePath.FullName);
+        //        ExportAlternativeDataFilePath.Add(alternativePath.Name + "-" + watershedDirectory.FullName + "-" +DateTime.Now.ToString("yyMMdd") + ".txt");
+        //    }
+
+        //    Model.Watershed WatershedCompute = new Model.Watershed(AlternativesDirectories);
+        //    for (int i = 0; i < WatershedCompute.Alternatives.Count; i++)
+        //    {
+        //        WatershedCompute.Alternatives[i].ExportData(ExportAlternativeDataFilePath[i]);
+        //    }
+        //    WatershedCompute.ExportWatershedData(watershedDirectory.FullName + "-" + DateTime.Now.ToString("yyMMdd") + ".txt");
+        //    CompileWatershedResults.Name = "The Results have been Complied and Placed in the Watershed Alterantives Directory";
+        //}
+
         public void CompileResults(object sender, EventArgs e)
         {
             CompileWatershedResults.IsEnabled = false;
             CompileWatershedResults.Name = "Please be patient I'm working...";
 
-            List<string> AlternativesDirectories = new List<string>();
-            List<string> ExportAlternativeDataFilePath = new List<string>();
+            ConcurrentBag<string> AlternativesDirectories = new ConcurrentBag<string>();
+            ConcurrentBag<string> ExportAlternativeDataFilePaths = new ConcurrentBag<string>();
             System.IO.DirectoryInfo watershedDirectory = new System.IO.DirectoryInfo(WatershedFolderPath);
-            foreach (System.IO.DirectoryInfo alternativePath in watershedDirectory.GetDirectories())
+            Parallel.ForEach(watershedDirectory.GetDirectories(), alternativePath =>
             {
                 AlternativesDirectories.Add(alternativePath.FullName);
-                ExportAlternativeDataFilePath.Add(alternativePath.Name + "-" + watershedDirectory.FullName + "-" +DateTime.Now.ToString("yyMMdd") + ".txt");
-            }
+                ExportAlternativeDataFilePaths.Add(watershedDirectory.FullName + "-" + alternativePath.Name  + "-" + DateTime.Now.ToString("yyMMdd") + ".txt");
+            });
 
-            Model.Watershed WatershedCompute = new Model.Watershed(AlternativesDirectories);
-            for (int i = 0; i < WatershedCompute.Alternatives.Count; i++)
+            List<string> ExportFilePaths = ExportAlternativeDataFilePaths.ToList();
+            Model.Watershed WatershedCompute = new Model.Watershed(AlternativesDirectories.ToList());
+            Parallel.For(0, WatershedCompute.Alternatives.Count, i =>
             {
-                WatershedCompute.Alternatives[i].ExportData(ExportAlternativeDataFilePath[i]);
-            }
-            WatershedCompute.ExportWatershedData(watershedDirectory.FullName + "-" + DateTime.Now.ToString("yyMMdd") + ".txt");
+                WatershedCompute.Alternatives[i].ExportData(ExportFilePaths[i]);
+            });
 
+            WatershedCompute.ExportWatershedData(watershedDirectory.FullName + "-" + DateTime.Now.ToString("yyMMdd") + ".txt");
+            WatershedCompute.ExportWatershedErrors(watershedDirectory.FullName + "Errors-" + DateTime.Now.ToString("yyMMdd") + ".txt");
             CompileWatershedResults.Name = "The Results have been Complied and Placed in the Watershed Alterantives Directory";
         }
        

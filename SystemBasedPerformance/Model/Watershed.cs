@@ -117,7 +117,21 @@ namespace SystemBasedPerformance.Model
                 }
                 exportData[i + 1] = WatershedValues[i].Cast<object>().ToArray();
             }
-            ExportDelimitedColumns(exportWatershedDataFilePath, exportData, columnNames);
+            Utilities.TextDataExporter.ExportDelimitedColumns(exportWatershedDataFilePath, exportData, columnNames);
+        }
+
+        public void ExportWatershedErrors(string exportWatershedErrorsFilePath)
+        {
+            List<object> exportData = new List<object>();
+            for (int i = 0; i < Alternatives.Count; i++)
+            {
+                for (int j = 0; j < Alternatives[i].Errors.Count; j++)
+                {
+                    exportData.Add(Alternatives[i].Errors[j]);
+                }
+                exportData.Add("");
+            }
+            Utilities.TextDataExporter.ExportSingleColumn(exportWatershedErrorsFilePath, exportData.ToArray());
         }
 
 

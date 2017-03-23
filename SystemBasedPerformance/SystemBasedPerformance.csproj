@@ -68,6 +68,7 @@
     <Compile Include="Model\Alternative.cs" />
     <Compile Include="Model\Event.cs" />
     <Compile Include="Model\Metric.cs" />
+    <Compile Include="Model\Utilities\TextDataExporter.cs" />
     <Compile Include="Model\Watershed.cs" />
     <Compile Include="ViewModel\BaseViewModel.cs" />
     <Compile Include="ViewModel\NamedAction.cs" />
