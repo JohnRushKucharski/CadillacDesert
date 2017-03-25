@@ -11,13 +11,29 @@ namespace SystemBasedPerformance.ViewModel
     public class WatershedViewModel: BaseViewModel
     {
         #region Fields
+        private Model.Watershed _Watershed;
         private string _WatershedFolderPath;
-        private NamedAction _CleanWatershedDirectory;
-        private NamedAction _CompileWatershedResults;
+        private List<string> _MetricsToCollect;
+        private List<string> _WriteDataFilesPaths;
+        private NamedAction _CleanDirectory;
+        private NamedAction _ReadData;
+        private NamedAction _WriteData;
         #endregion
 
 
         #region Properties
+        public Model.Watershed Watershed
+        {
+            get
+            {
+                return _Watershed;
+            }
+            set
+            {
+                _Watershed = value;
+            }
+        }
+
         public string WatershedFolderPath
         {
             get
@@ -29,36 +45,72 @@ namespace SystemBasedPerformance.ViewModel
                 _WatershedFolderPath = value;
                 if (System.IO.Directory.Exists(WatershedFolderPath) == true)
                 {
-                    CleanWatershedDirectory.IsEnabled = true;
-                    CompileWatershedResults.IsEnabled = true;
+                    CleanDirectory.IsEnabled = true;
+                    ReadData.IsEnabled = true;
                     NotifyPropertyChanged();
                 }
             }
         }
 
-        public NamedAction CleanWatershedDirectory
+        public List<string> MetricsToCollect
         {
             get
             {
-                return _CleanWatershedDirectory;
+                return _MetricsToCollect;
+            }
+            set
+            {
+                _MetricsToCollect = value;
+            }
+        }
+
+        public List<string> WriteDataFilePaths
+        {
+            get
+            {
+                return _WriteDataFilesPaths;
+            }
+            set
+            {
+                _WriteDataFilesPaths = value;
+            }
+        }
+
+        public NamedAction CleanDirectory
+        {
+            get
+            {
+                return _CleanDirectory;
             }
             private set
             {
-                _CleanWatershedDirectory = value;
+                _CleanDirectory = value;
                 NotifyPropertyChanged();
             }
         }
         
-        public NamedAction CompileWatershedResults
+        public NamedAction ReadData
         {
             get
             {
-                return _CompileWatershedResults;
+                return _ReadData;
             }
             private set
             {
-                _CompileWatershedResults = value;
+                _ReadData = value;
                 NotifyPropertyChanged();
+            }
+        }
+
+        public NamedAction WriteData
+        {
+            get
+            {
+                return _WriteData;
+            }
+            set
+            {
+                _WriteData = value;
             }
         }
         #endregion
@@ -68,12 +120,19 @@ namespace SystemBasedPerformance.ViewModel
         public WatershedViewModel()
         {
             WatershedFolderPath ="";
-            CleanWatershedDirectory = new NamedAction("Clean Watershed Directory");
-            CompileWatershedResults = new NamedAction("Compile Watershed Results");
-            CleanWatershedDirectory.IsEnabled = false;
-            CompileWatershedResults.IsEnabled = false;
-            CleanWatershedDirectory.Action = CleanWatershedAlternativesEventsDirectories;
-            CompileWatershedResults.Action = CompileResults;
+
+            CleanDirectory = new NamedAction("Clean Watershed Directory");
+            CleanDirectory.IsEnabled = false;
+            CleanDirectory.Action = CleanWatershedAlternativesEventsDirectories;
+
+            ReadData = new NamedAction("Read Watershed Data");
+            ReadData.IsEnabled = false;
+            ReadData.Action = ReadWatershedData;
+
+            WriteData = new NamedAction("Write Watershed Data To Text Files");
+            WriteData.IsEnabled = false;
+            WriteData.Action = WriteWatershedData;
+            
         }
         #endregion
 
@@ -81,8 +140,8 @@ namespace SystemBasedPerformance.ViewModel
         #region NamedActions
         public void CleanWatershedAlternativesEventsDirectories(object sender, EventArgs e)
         {
-            CleanWatershedDirectory.IsEnabled = false;
-            CleanWatershedDirectory.Name = "Please be patient I'm working...";
+            CleanDirectory.IsEnabled = false;
+            CleanDirectory.Name = "Please be patient I'm working...";
 
             System.IO.DirectoryInfo watershedDirectory = new System.IO.DirectoryInfo(WatershedFolderPath);
             foreach (System.IO.DirectoryInfo alternativeDirectory in watershedDirectory.GetDirectories())
@@ -98,8 +157,41 @@ namespace SystemBasedPerformance.ViewModel
                     }
                 }
             }
-            CleanWatershedDirectory.Name = "The Watershed Alternatives Directory has been Cleaned.";
+            CleanDirectory.Name = "The Watershed Alternatives Directory has been Cleaned.";
         }
+
+        public void ReadWatershedData(object sender, EventArgs e)
+        {
+            ReadData.IsEnabled = false;
+            ReadData.Name = "Please be patient I'm working...";
+
+            ConcurrentBag<string> AlternativesDirectories = new ConcurrentBag<string>();
+            ConcurrentBag<string> ExportAlternativeDataFilePaths = new ConcurrentBag<string>();
+            System.IO.DirectoryInfo watershedDirectory = new System.IO.DirectoryInfo(WatershedFolderPath);
+            Parallel.ForEach(watershedDirectory.GetDirectories(), alternativePath =>
+            {
+                AlternativesDirectories.Add(alternativePath.FullName);
+                ExportAlternativeDataFilePaths.Add(watershedDirectory.FullName + "-" + alternativePath.Name + "-" + DateTime.Now.ToString("yyMMdd") + ".txt");
+            });
+            WriteDataFilePaths = ExportAlternativeDataFilePaths.ToList();
+            Watershed = new Model.Watershed(AlternativesDirectories.ToList());
+            ReadData.Name = "The Watershed Data is being Held in Memory";
+        }
+
+        public void WriteWatershedData(object sender, EventArgs e)
+        {
+            WriteData.IsEnabled = false;
+            WriteData.Name = "Please be patient I'm working...";
+
+            Parallel.For(0, Watershed.Alternatives.Count, i =>
+            {
+                Watershed.Alternatives[i].ExportData(WriteDataFilePaths[i]);
+            });
+            Watershed.ExportData(WatershedFolderPath + "-" + DateTime.Now.ToString("yyMMdd") + ".txt");
+            Watershed.ExportErrors(WatershedFolderPath + "Errors-" + DateTime.Now.ToString("yyMMdd") + ".txt");
+            ReadData.Name = "The Results have been Complied and Placed in the Watershed Alterantives Directory";
+        }
+
 
         //public void CompileResults(object sender, EventArgs e)
         //{
@@ -123,33 +215,6 @@ namespace SystemBasedPerformance.ViewModel
         //    WatershedCompute.ExportWatershedData(watershedDirectory.FullName + "-" + DateTime.Now.ToString("yyMMdd") + ".txt");
         //    CompileWatershedResults.Name = "The Results have been Complied and Placed in the Watershed Alterantives Directory";
         //}
-
-        public void CompileResults(object sender, EventArgs e)
-        {
-            CompileWatershedResults.IsEnabled = false;
-            CompileWatershedResults.Name = "Please be patient I'm working...";
-
-            ConcurrentBag<string> AlternativesDirectories = new ConcurrentBag<string>();
-            ConcurrentBag<string> ExportAlternativeDataFilePaths = new ConcurrentBag<string>();
-            System.IO.DirectoryInfo watershedDirectory = new System.IO.DirectoryInfo(WatershedFolderPath);
-            Parallel.ForEach(watershedDirectory.GetDirectories(), alternativePath =>
-            {
-                AlternativesDirectories.Add(alternativePath.FullName);
-                ExportAlternativeDataFilePaths.Add(watershedDirectory.FullName + "-" + alternativePath.Name  + "-" + DateTime.Now.ToString("yyMMdd") + ".txt");
-            });
-
-            List<string> ExportFilePaths = ExportAlternativeDataFilePaths.ToList();
-            Model.Watershed WatershedCompute = new Model.Watershed(AlternativesDirectories.ToList());
-            Parallel.For(0, WatershedCompute.Alternatives.Count, i =>
-            {
-                WatershedCompute.Alternatives[i].ExportData(ExportFilePaths[i]);
-            });
-
-            WatershedCompute.ExportWatershedData(watershedDirectory.FullName + "-" + DateTime.Now.ToString("yyMMdd") + ".txt");
-            WatershedCompute.ExportWatershedErrors(watershedDirectory.FullName + "Errors-" + DateTime.Now.ToString("yyMMdd") + ".txt");
-            CompileWatershedResults.Name = "The Results have been Complied and Placed in the Watershed Alterantives Directory";
-        }
-       
         #endregion
 
     }

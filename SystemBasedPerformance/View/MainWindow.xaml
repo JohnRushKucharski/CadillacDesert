@@ -20,6 +20,7 @@
             <RowDefinition Height="40"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="*"/>
+            <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
         <Grid Grid.Row="0">
@@ -27,8 +28,9 @@
                 <ColumnDefinition Width="240"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
+            
             <Label Content="Watershed Alternatives Directories Folder:" VerticalAlignment="Center"/>
-            <ConsequencesAssist:TextBoxFolderBrowser Grid.Column="1" Name="tbfbCleanAlternativeDirectories" FolderPath="{Binding Path=WatershedFolderPath, Mode=TwoWay}" VerticalAlignment="Center" Margin="5"/>
+            <ConsequencesAssist:TextBoxFolderBrowser Grid.Column="1" Name="tbfbCleanAlternativeDirectories" FolderPath="{Binding Path=WatershedFolderPath, Mode=TwoWay}" Height="25" VerticalAlignment="Center" Margin="5" />
         </Grid>
         
        
@@ -42,11 +44,12 @@
                 <Run Text="Warning:" FontSize="13" FontWeight="Bold" />
                 clicking the Clean Alternative Directories button below deletes all HEC-HMS, HEC-ResSIM and HEC-RAS event files...
             </TextBlock>
-            <Button Grid.Row="1" Name="btnCleanAlternativeDirectories" Content="{Binding Path=CleanWatershedDirectory.Name}" IsEnabled="{Binding Path=CleanWatershedDirectory.IsEnabled}" Margin="5"/>
+            <Button Grid.Row="1" Name="btnCleanAlternativeDirectories" Content="{Binding Path=CleanDirectory.Name}" IsEnabled="{Binding Path=CleanDirectory.IsEnabled}" Margin="5"/>
         </Grid>
 
 
 
-        <Button Grid.Row="2" Name="btnGenerateResultsFiles" Content="{Binding Path=CompileWatershedResults.Name}" IsEnabled="{Binding Path=CompileWatershedResults.IsEnabled}" Margin="5" />
+        <Button Grid.Row="2" Name="btnReadData" Content="{Binding Path=ReadData.Name}" IsEnabled="{Binding Path=ReadData.IsEnabled}" Margin="5" />
+        <Button Grid.Row="3" Name="btnWriteData" Content="{Binding Path=WriteData.Name}" IsEnabled="{Binding Path=WriteData.IsEnabled}" Margin="5" />
     </Grid>
 </Window>

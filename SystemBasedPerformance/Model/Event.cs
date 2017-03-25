@@ -13,6 +13,7 @@ namespace SystemBasedPerformance.Model
         private string _Name;
         private System.IO.DirectoryInfo _FileDirectory;
         private System.IO.DirectoryInfo _AltName;
+        private double _Probability;
         private List<Metric> _Metrics;
         #endregion
 
@@ -50,6 +51,17 @@ namespace SystemBasedPerformance.Model
                 _AltName = value;
             }
         }
+        public double Probability
+        {
+            get
+            {
+                return _Probability;
+            }
+            set
+            {
+                _Probability = value;
+            }
+        }
         public List<Metric> Metrics
         {
             get
@@ -64,12 +76,13 @@ namespace SystemBasedPerformance.Model
         #endregion
 
         #region Constructors
-        public Event(System.IO.DirectoryInfo directory)
+        public Event(System.IO.DirectoryInfo directory, double probability)
         {
             Name = directory.Name;
             
             FileDirectory = new System.IO.DirectoryInfo(directory.FullName + "\\FIA");
             AltName = (FileDirectory.GetDirectories())[0];
+            Probability = probability;
             CompileMetrics();
         }
         #endregion
