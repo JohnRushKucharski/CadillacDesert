@@ -62,7 +62,7 @@ namespace SystemBasedPerformance.Model
         {
             Name = metricName;
             Value = metricValue;
-            if (double.IsNaN(metricValue))
+            if (double.IsNaN(metricValue) == true)
             {
                 HasError = true;
                 ErrorMessage = "The metric value is not a number.";

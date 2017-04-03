@@ -1,10 +1,12 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Concurrent;
 using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows.Controls;
 
 namespace SystemBasedPerformance.ViewModel
 {
@@ -13,11 +15,17 @@ namespace SystemBasedPerformance.ViewModel
         #region Fields
         private Model.Watershed _Watershed;
         private string _WatershedFolderPath;
-        private List<string> _MetricsToCollect;
+
+        private List<string> _SelectableMetrics;
+        private List<string> _SelectedMetrics = new List<string>();
         private List<string> _WriteDataFilesPaths;
+
         private NamedAction _CleanDirectory;
         private NamedAction _ReadData;
         private NamedAction _WriteData;
+
+        private bool _IsProgressing;
+        private int _Progress;
         #endregion
 
 
@@ -52,15 +60,29 @@ namespace SystemBasedPerformance.ViewModel
             }
         }
 
-        public List<string> MetricsToCollect
+        public List<string> SelectableMetrics
         {
             get
             {
-                return _MetricsToCollect;
+                return _SelectableMetrics;
             }
             set
             {
-                _MetricsToCollect = value;
+                _SelectableMetrics = value;
+                NotifyPropertyChanged();
+            }
+        }
+
+        public List<string> SelectedMetrics
+        {
+            get
+            {
+                return _SelectedMetrics;
+            }
+            set
+            {
+                _SelectedMetrics = value;
+                NotifyPropertyChanged();
             }
         }
 
@@ -73,6 +95,7 @@ namespace SystemBasedPerformance.ViewModel
             set
             {
                 _WriteDataFilesPaths = value;
+                NotifyPropertyChanged();
             }
         }
 
@@ -102,6 +125,18 @@ namespace SystemBasedPerformance.ViewModel
             }
         }
 
+        //public NamedAction SelectMetrics
+        //{
+        //    get
+        //    {
+        //        return _SelectMetrics;
+        //    }
+        //    set
+        //    {
+        //        _SelectMetrics = value;
+        //    }
+        //}
+
         public NamedAction WriteData
         {
             get
@@ -111,6 +146,31 @@ namespace SystemBasedPerformance.ViewModel
             set
             {
                 _WriteData = value;
+                NotifyPropertyChanged();
+            }
+        }
+
+        public bool IsProgressing
+        {
+            get
+            {
+                return _IsProgressing;
+            }
+            set
+            {
+                _IsProgressing = value;
+            }
+        }
+
+        public int Progress
+        {
+            get
+            {
+                return _Progress;
+            }
+            set
+            {
+                _Progress = value;
             }
         }
         #endregion
@@ -129,9 +189,14 @@ namespace SystemBasedPerformance.ViewModel
             ReadData.IsEnabled = false;
             ReadData.Action = ReadWatershedData;
 
+            //SelectMetrics = new NamedAction("SelectMetrics");
+            //SelectMetrics.IsEnabled = true;
+            //SelectMetrics.Action = BuildSelectedMetrics;
+
             WriteData = new NamedAction("Write Watershed Data To Text Files");
             WriteData.IsEnabled = false;
             WriteData.Action = WriteWatershedData;
+
             
         }
         #endregion
@@ -162,12 +227,29 @@ namespace SystemBasedPerformance.ViewModel
 
         public void ReadWatershedData(object sender, EventArgs e)
         {
-            ReadData.IsEnabled = false;
-            ReadData.Name = "Please be patient I'm working...";
+            
+            //double iteration = 0;
+            //IsProgressing = true;
+            //object thisLock = new object();
+            //double iterations = new System.IO.DirectoryInfo(WatershedFolderPath).GetDirectories().Count();
 
+            ReadData.IsEnabled = false;
             ConcurrentBag<string> AlternativesDirectories = new ConcurrentBag<string>();
             ConcurrentBag<string> ExportAlternativeDataFilePaths = new ConcurrentBag<string>();
             System.IO.DirectoryInfo watershedDirectory = new System.IO.DirectoryInfo(WatershedFolderPath);
+
+            //Task.Factory.StartNew(() =>
+            //Parallel.ForEach(watershedDirectory.GetDirectories(), alternativePath =>
+            //{
+            //    AlternativesDirectories.Add(alternativePath.FullName);
+            //    ExportAlternativeDataFilePaths.Add(watershedDirectory.FullName + "-" + alternativePath.Name + "-" + DateTime.Now.ToString("yyMMdd") + ".txt");
+
+            //    lock (thisLock)
+            //    {
+            //        Progress = (int)((iteration + 1) / iterations * 100);
+            //    }
+
+            //}));
             Parallel.ForEach(watershedDirectory.GetDirectories(), alternativePath =>
             {
                 AlternativesDirectories.Add(alternativePath.FullName);
@@ -175,23 +257,64 @@ namespace SystemBasedPerformance.ViewModel
             });
             WriteDataFilePaths = ExportAlternativeDataFilePaths.ToList();
             Watershed = new Model.Watershed(AlternativesDirectories.ToList());
+            BuildSelectableList();
+
+            WriteData.IsEnabled = true;
             ReadData.Name = "The Watershed Data is being Held in Memory";
         }
+
+        //public void BuildSelectedMetrics(object sender, EventArgs e)
+        //{
+        //    SelectionChangedEventArgs d = (SelectionChangedEventArgs)e;
+        //    foreach (string metric in d.RemovedItems)
+        //    {
+        //        SelectedMetrics.Remove(metric);
+        //    }
+        //    foreach (string metric in d.AddedItems)
+        //    {
+        //        SelectedMetrics.Add(metric);
+        //    }
+        //}
 
         public void WriteWatershedData(object sender, EventArgs e)
         {
             WriteData.IsEnabled = false;
-            WriteData.Name = "Please be patient I'm working...";
-
-            Parallel.For(0, Watershed.Alternatives.Count, i =>
+            for (int i = 0; i < Watershed.Alternatives.Count; i++)
             {
+                Watershed.Alternatives[i].CalculateAlternativeMetrics(SelectedMetrics);
                 Watershed.Alternatives[i].ExportData(WriteDataFilePaths[i]);
-            });
+            }
+
+
+            //Parallel.For(0, Watershed.Alternatives.Count, i =>
+            //{
+            //    Watershed.Alternatives[i].CalculateAlternativeMetrics(SelectedMetrics);
+            //    Watershed.Alternatives[i].ExportData(WriteDataFilePaths[i]);
+            //});
             Watershed.ExportData(WatershedFolderPath + "-" + DateTime.Now.ToString("yyMMdd") + ".txt");
             Watershed.ExportErrors(WatershedFolderPath + "Errors-" + DateTime.Now.ToString("yyMMdd") + ".txt");
-            ReadData.Name = "The Results have been Complied and Placed in the Watershed Alterantives Directory";
+            WriteData.Name = "The Results have been Complied and Placed in the Watershed Alterantives Directory";
         }
+        #endregion
 
+        #region Voids
+        private void BuildSelectableList()
+        {
+            SelectableMetrics = new List<string>();
+            for (int i = 0; i < Watershed.Alternatives.Count; i++)
+            {
+                for (int j = 0; j < Watershed.Alternatives[i].Events.Length; j++)
+                {
+                    for (int n = 0; n < Watershed.Alternatives[i].Events[j].Metrics.Count; n++)
+                    {
+                        if (SelectableMetrics.Contains(Watershed.Alternatives[i].Events[j].Metrics[n].Name) == false)
+                        {
+                            SelectableMetrics.Add(Watershed.Alternatives[i].Events[j].Metrics[n].Name);
+                        }
+                    }
+                }
+            }
+        }
 
         //public void CompileResults(object sender, EventArgs e)
         //{

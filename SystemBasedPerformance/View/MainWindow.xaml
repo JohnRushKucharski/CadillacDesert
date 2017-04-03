@@ -5,10 +5,11 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:ViewModels="clr-namespace:SystemBasedPerformance.ViewModel"
         xmlns:ConsequencesAssist="clr-namespace:Consequences_Assist.Controls;assembly=Consequences_Assist"
+        xmlns:CustomViewItems="clr-namespace:SystemBasedPerformance.View"
 
         xmlns:local="clr-namespace:SystemBasedPerformance.View"
         mc:Ignorable="d"
-        Title="System Based Performance Tools" Height="350" Width="600">
+        Title="System Based Performance Tools" Height="500" Width="600">
     
     <Window.Resources>
         <ViewModels:WatershedViewModel x:Key="WatershedVM"/>
@@ -19,8 +20,10 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="40"/>
             <RowDefinition Height="*"/>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="*"/>
+            <RowDefinition Height="0.5*"/>
+            <RowDefinition Height="2*"/>
+            <RowDefinition Height="0.5*"/>
+            <RowDefinition Height="0.25*"/>
         </Grid.RowDefinitions>
 
         <Grid Grid.Row="0">
@@ -47,9 +50,47 @@
             <Button Grid.Row="1" Name="btnCleanAlternativeDirectories" Content="{Binding Path=CleanDirectory.Name}" IsEnabled="{Binding Path=CleanDirectory.IsEnabled}" Margin="5"/>
         </Grid>
 
-
-
         <Button Grid.Row="2" Name="btnReadData" Content="{Binding Path=ReadData.Name}" IsEnabled="{Binding Path=ReadData.IsEnabled}" Margin="5" />
-        <Button Grid.Row="3" Name="btnWriteData" Content="{Binding Path=WriteData.Name}" IsEnabled="{Binding Path=WriteData.IsEnabled}" Margin="5" />
+        
+        <Grid Grid.Row="3">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="25"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+                
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <Label Grid.Row="0" Grid.Column="0" Content="Selectable Metrics:"/>
+            <!--<ListBox Grid.Row="1" Grid.Column="0" Name="lstBoxSelectableMetrics" 
+                     ItemsSource="{Binding Path=SelectableMetrics}" SelectionMode="Extended"   
+                     Margin="5">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding}" />
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>-->
+            <CustomViewItems:CustomListBox x:Name="lstBoxSelectableMetrics" Grid.Row="1" Grid.Column="0" Margin="5"
+                ItemsSource="{Binding Path=SelectableMetrics}" SelectionMode="Extended" 
+                SelectedItemsList="{Binding Path=SelectedMetrics, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" SelectionChanged="lstBoxSelectableMetrics_SelectionChanged"/>
+
+            <Label Grid.Row="0" Grid.Column="1" Content="SelectedMetrics"/>
+            <ListBox Grid.Row="1" Grid.Column="1" Name="lstBoxSelectedMetrics"
+                     ItemsSource="{Binding SelectedItems, ElementName=lstBoxSelectableMetrics}"
+                     Margin="5">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding}"/>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+        </Grid>
+        
+        
+        <Button Grid.Row="4" Name="btnWriteData" Content="{Binding Path=WriteData.Name}" IsEnabled="{Binding Path=WriteData.IsEnabled}" Margin="5" />
+        <ProgressBar Grid.Row="5" Minimum="0" Maximum="100" Value="{Binding Path=Progress}" IsEnabled="{Binding Path=IsProgressing}"/>
     </Grid>
 </Window>

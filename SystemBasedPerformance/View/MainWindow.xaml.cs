@@ -25,8 +25,24 @@ namespace SystemBasedPerformance.View
             InitializeComponent();
             this.btnCleanAlternativeDirectories.Click += (sender, e) => ((ViewModel.WatershedViewModel)this.Resources["WatershedVM"]).CleanDirectory.Action(sender, e);
             this.btnReadData.Click += (sender, e) => ((ViewModel.WatershedViewModel)this.Resources["WatershedVM"]).ReadData.Action(sender, e);
-            
+            this.btnWriteData.Click += (sender, e) => ((ViewModel.WatershedViewModel)this.Resources["WatershedVM"]).WriteData.Action(sender, e);
+            //this.lstBoxSelectableMetrics.SelectionChanged += (sender, e) => ((ViewModel.WatershedViewModel)this.Resources["WatershedVM"]).ReadData.Action(sender, e);
         }
+
+        private void lstBoxSelectableMetrics_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+
+            foreach (string metric in e.RemovedItems)
+            {
+                ((ViewModel.WatershedViewModel)this.Resources["WatershedVM"]).SelectedMetrics.Remove(metric);
+            }
+            foreach (string metric in e.AddedItems)
+            {
+                ((ViewModel.WatershedViewModel)this.Resources["WatershedVM"]).SelectedMetrics.Add(metric);
+            }
+        }
+
+
 
         //private void btnGenerateResultsFiles_Click(object sender, RoutedEventArgs e)
         //{

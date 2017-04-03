@@ -13,8 +13,6 @@ namespace SystemBasedPerformance.Model
         private System.IO.DirectoryInfo _FileDirectory;
         private Event[] _Events;
         private List<Metric> _Metrics;
-        //private List<Tuple<string, double>> _Metrics;
-        //private List<string> _Errors;
         #endregion
 
         #region Properties
@@ -62,29 +60,6 @@ namespace SystemBasedPerformance.Model
                 _Metrics = value;
             }
         }
-
-        //public List<Tuple<string, double>> Metrics
-        //{
-        //    get
-        //    {
-        //        return _Metrics;
-        //    }
-        //    set
-        //    {
-        //        _Metrics = value;
-        //    }
-        //}
-        //public List<string> Errors
-        //{
-        //    get
-        //    {
-        //        return _Errors;
-        //    }
-        //    set
-        //    {
-        //        _Errors = value;
-        //    }
-        //}
         #endregion
 
         #region Constructors
@@ -118,27 +93,97 @@ namespace SystemBasedPerformance.Model
         #endregion
 
         #region Functions
-        //public List<double> CalculatedExpectedValue(List<string> metricNames, List<List<double>> metricValues)
-        //{
-        //    Metrics = new List<Tuple<string, double>>();
-        //    List<double> expectedValue = new List<double>();
-        //    double[] probabilities = new double[10] { 0.99, 0.50, 0.20, 0.10, 0.04, 0.02, 0.01, 0.005, 0.002, 0.001 };
-        //    for (int i = 0; i < metricValues[0].Count; i++)
-        //    {
-        //        expectedValue.Add(0);
-        //        for (int j = 0; j < metricValues.Count - 1; j++)
-        //        {
-        //            expectedValue[i] += (metricValues[j][i] + metricValues[j + 1][i]) / 2 * (probabilities[j] - probabilities[j + 1]);
-        //        }
-        //        Metrics.Add(new Tuple<string, double> (metricNames[i], expectedValue[i]));
-        //    }
-        //    return expectedValue;
-        //}
+
         #endregion
 
         #region Voids
-        public void CalculateAlternativeMetrics()
+        public void CalculateAlternativeMetrics(List<string> selectedMetrics = null)
         {
+            if (selectedMetrics == null)
+            {
+                CalculateAlternativeMetrics();
+            }
+            else
+            {
+                Metrics = new List<Metric>();
+                for (int i = 0; i < Events.Length; i++)                                 //1. Loop Over Events
+                {
+                    if (i == 0)                                                         //a. Create inital values
+                    {
+                        for (int n = 0; n < selectedMetrics.Count; n++)
+                        {
+                            for (int j = 0; j < Events[i].Metrics.Count; j++)
+                            {
+                                if (selectedMetrics[n] == Events[i].Metrics[j].Name)
+                                {
+                                    if (double.IsNaN(Events[i].Metrics[j].Value))
+                                    {
+                                        Metrics.Add(new Metric(Events[i].Metrics[j].Name, "The metric value is not a number. No value existed for event 1."));
+                                    }
+                                    else
+                                    {
+                                        Metrics.Add(new Metric(Events[i].Metrics[j].Name, 0));
+                                    }
+                                    break;
+                                }
+
+                                if (j + 1 == Events[i].Metrics.Count)
+                                {
+                                    Metrics.Add(new Metric(selectedMetrics[n], "This metric was not found for event 1."));
+                                }
+                            }
+                        }
+                    }
+                    else
+                    {
+                        for (int n = 0; n < Metrics.Count; n++)                         //2. Loop Over Captured Metrics
+                        {
+                            if (Metrics[n].HasError == false)                           //a. if the metric is in error state exit
+                            {
+                                for (int j = 0; j < Events[i].Metrics.Count; j++)
+                                {
+                                    if (Metrics[n].Name == Events[i].Metrics[j].Name)
+                                    {
+                                        if (double.IsNaN(Events[i].Metrics[j].Value) == true)
+                                        {
+                                            Metrics[n].ReportMessage("The metric value is not a number. The value was invalid for event " + (i + 1) + ".");
+                                        }
+                                        else
+                                        {
+                                            for (int k = 0; k < Events[i-1].Metrics.Count; k++)
+                                            {
+                                                if (Events[i].Metrics[j].Name == Events[i - 1].Metrics[k].Name)
+                                                {
+                                                    if (Events[i].Metrics[j].Value < Events[i - 1].Metrics[k].Value)
+                                                    {
+                                                        Metrics[n].ReportMessage("The metric value is not a number. The value was not increasing between events " + i + " and " + (i + 1) + ".");
+                                                    }
+                                                    else
+                                                    {
+                                                        Metrics[n].Value += (Events[i - 1].Metrics[k].Value + Events[i].Metrics[j].Value) / 2 * (Events[i - 1].Probability - Events[i].Probability);
+                                                    }
+                                                }
+                                            }
+                                            
+                                        }
+                                        break;
+                                    }
+
+                                    if (j + 1 == Events[i].Metrics.Count)
+                                    {
+                                        Metrics[n].ReportMessage("The metric value is not a number. It was not computed for event " + (i + 1) + ".");
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        private void CalculateAlternativeMetrics()
+        {
+            Metrics = new List<Metric>();
             for (int i = 0; i < Events.Length; i++)                                 //1. Loop Over Events
             {
                 if (i == 0)                                                         //a. Create inital values
@@ -212,36 +257,100 @@ namespace SystemBasedPerformance.Model
 
         public void ExportData(string exportedDataFile)
         {
-            string[] columnTitles = new string[Events.Length + 2];
-            object[][] data = new object[columnTitles.Length][]; data[0] = new object[Metrics.Count];
-            for (int n = 0; n < Metrics.Count; n++)
+            object[] metricsNames = new object[Metrics.Count];
+            object[] metricsValue = new object[Metrics.Count];
+            string[] columnTitles = new string[Events.Length + 2]; columnTitles[0] = "Metric:v|Event:>";
+            object[][] exportData = new object[Events.Length + 2][];  
+            
+            for (int n = 0; n < Events.Length; n++)
             {
-                data[0][n] = Metrics[n].Name;
-                columnTitles[0] = "Metric:v|Event:>";
-                for (int i = 0; i < Events.Length; i++)
+                columnTitles[n + 1] = Events[n].Name + ": " + Events[n].Probability + " ACE event";
+                object[] eventColumn = new object[Metrics.Count]; 
+                for (int i = 0; i < Metrics.Count; i++)
                 {
+                    if (n == 0)
+                    {   
+                        metricsNames[i] = Metrics[i].Name;
+                    }
 
-                    for (int j = 0; j < Events[i].Metrics.Count; j++)
+                    for (int j = 0; j < Events[n].Metrics.Count; j++)
                     {
-                        if (Events[i].Metrics[j].Name == Metrics[n].Name)
+                        if (Events[n].Metrics[j].Name == Metrics[i].Name)
                         {
-                            columnTitles[i + 1] = Events[i].Name;
-                            data[i + 1][n] = Events[i].Metrics[j].Value;
+                            eventColumn[i] = Events[n].Metrics[j].Value;
                             break;
                         }
 
-                        if (j + 1 == Events[i].Metrics.Count)
+                        if (j == Events[n].Metrics.Count - 1)
                         {
-                            columnTitles[i + 1] = Events[i].Name;
-                            data[i + 1][n] = "Not Found";
+                            eventColumn[i] = "Not Found";
                         }
                     }
+
+                    if (n == Events.Length - 1)
+                    {
+                        metricsValue[i] = Metrics[i].Value;
+                    }
                 }
-                data[data.Length - 1][n] = Metrics[n].Value;
-                columnTitles[columnTitles.Length - 1] = "Expected Annual Value";
+
+                if (n == 0)
+                {
+                    exportData[n] = metricsNames;
+                }
+                exportData[n + 1] = eventColumn;
+                if (n == Events.Length - 1)
+                {
+                    exportData[n + 2] = metricsValue;
+                }
             }
-            Utilities.TextDataExporter.ExportDelimitedColumns(exportedDataFile, data, columnTitles);
+            Utilities.TextDataExporter.ExportDelimitedColumns(exportedDataFile, exportData, columnTitles);
         }
+
+        //public void ExportData(string exportedDataFile)
+        //{
+        //    string[] columnTitles = new string[Events.Length + 2];
+        //    object[][] data = new object[columnTitles.Length][]; data[0] = new object[Metrics.Count]; data[Events.Length + 1] = new object[Metrics.Count];
+        //    for (int n = 0; n < Metrics.Count; n++)
+        //    {
+        //        data[0][n] = Metrics[n].Name;
+        //        columnTitles[0] = "Metric:v|Event:>";
+
+        //        data[i] = new object[Events.Count];
+        //        for (int j = 0; j < Events.Length; j++)
+        //        {
+        //            for (int i = 0; i < Events[j].Metrics.Count; i++)
+        //            {
+        //                if (Metrics[n].Name == Events[j].Metrics[i].Name)
+        //                {
+        //                    data[i][j] = Events[j].Metrics[i].Value;
+        //                }
+        //            }
+        //        }
+
+        //        for (int i = 0; i < Events.Length; i++)
+        //        {
+        //            data[i + 1] = new object[Metrics.Count];
+        //            for (int j = 0; j < Events[i].Metrics.Count; j++)
+        //            {
+        //                if (Events[i].Metrics[j].Name == Metrics[n].Name)
+        //                {
+        //                    columnTitles[i + 1] = Events[i].Name + ": " + Events[i].Probability;
+        //                    data[i + 1][n] = Events[i].Metrics[j].Value;
+        //                    break;
+        //                }
+
+        //                if (j + 1 == Events[i].Metrics.Count)
+        //                {
+        //                    columnTitles[i + 1] = Events[i].Name;
+        //                    data[i + 1][n] = "Not Found";
+        //                }
+        //            }
+        //        }
+        //        data[Events.Length + 1][n] = Metrics[n].Value;
+        //        columnTitles[columnTitles.Length - 1] = "Expected Annual Value";
+        //    }
+        //    Utilities.TextDataExporter.ExportDelimitedColumns(exportedDataFile, data, columnTitles);
+        //}
 
         //public void ExportData(string exportAlternativeDataFilePath)
         //{

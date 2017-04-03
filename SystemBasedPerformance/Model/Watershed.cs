@@ -63,10 +63,9 @@ namespace SystemBasedPerformance.Model
                 }
                 else
                 {
-                    
-                    for (int n = 0; n < exportData[0].Length; n++)
+                    for (int n = 0; n < exportData[i].Length; n++)                              //# of SelectedMetrics
                     {
-                        for (int j = 0; j < Alternatives[i].Metrics.Count; j++)
+                        for (int j = 0; j < Alternatives[i].Metrics.Count; j++)                 //# of SelectableMetrics
                         {
                             if ((string)exportData[0][n] == Alternatives[i].Metrics[j].Name)
                             {
@@ -114,11 +113,11 @@ namespace SystemBasedPerformance.Model
                 {
                     if (Alternatives[i].Metrics[j].HasError == false)
                     {
-                        exportData.Add("1. " + Alternatives[i].Metrics[j].Name + ": NO errors.");
+                        exportData.Add((j + 1) + ". " + Alternatives[i].Metrics[j].Name + ": NO errors.");
                     }
                     else
                     {
-                        exportData.Add("1. " + Alternatives[i].Metrics[j].Name + ": ");
+                        exportData.Add((j + 1) + ". " + Alternatives[i].Metrics[j].Name + ": ");
                         exportData.Add(" - " + Alternatives[i].Metrics[j].ErrorMessage);
                     }
                 }
