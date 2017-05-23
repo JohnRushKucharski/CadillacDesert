@@ -38,8 +38,9 @@
     <StartupObject>ClimateRiskToolkit.View.App</StartupObject>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Consequences_Assist">
-      <HintPath>..\..\..\..\..\..\..\Perforce\Consequences\ConsequenceToolLibraries_Main-jrk\ConsequenceToolLibraries\Output\Debug\Consequences_Assist.dll</HintPath>
+    <Reference Include="Consequences_Assist, Version=1.0.0.0, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Perforce\Consequences\ConsequenceToolLibraries_Main-jrk\ConsequenceToolLibraries\Output\Debug\Consequences_Assist.dll</HintPath>
     </Reference>
     <Reference Include="DataTable_Viewer">
       <HintPath>..\..\..\..\..\..\..\Perforce\Consequences\ConsequenceToolLibraries_Main-jrk\ConsequenceToolLibraries\Output\Debug\DataTable_Viewer.dll</HintPath>
