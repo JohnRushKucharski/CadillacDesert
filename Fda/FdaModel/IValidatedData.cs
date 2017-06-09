@@ -4,9 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FdaModel
+namespace Model
 {
-    public class Class1
+    public interface IValidatedData
     {
+        bool IsValid { get; }
     }
 }
