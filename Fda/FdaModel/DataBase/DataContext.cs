@@ -9,7 +9,7 @@ namespace Model.DataBase
     {
         //public DbSet<Project> Projects { get; set; }
         //public DbSet<FunctionBase> Functions { get; set; }
-        public DbSet<OutflowFrequencyDecorator> f { get; set; }
+        //public DbSet<OutflowFrequencyDecorator> f { get; set; }
 
         public DataContext(string nameOrConnectionString): base(nameOrConnectionString)
         {
@@ -32,7 +32,7 @@ namespace Model.DataBase
             //modelBuilder.Entity<Project>();
             //modelBuilder.Entity<Decorator>().HasRequired(t=>t.Function);
             //modelBuilder.Entity<FunctionBase>();
-            modelBuilder.Entity<OutflowFrequencyDecorator>().HasRequired(t => t.Function);
+            //modelBuilder.Entity<OutflowFrequencyDecorator>().HasRequired(t => t.Function);
             //
 
             

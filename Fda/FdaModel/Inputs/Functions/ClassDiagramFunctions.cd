@@ -1,0 +1,131 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="Model.Inputs.Functions.FrequencyFunction">
+    <Position X="4" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AQAAAQBAEECAAAAAAAgAAANAAAAAAAQAAAAQAQAAACA=</HashCode>
+      <FileName>Inputs\Functions\FrequencyFunction.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Model.Inputs.Functions.OrdinatesFunction">
+    <Position X="0.5" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAQAAEACggAAAQAgAAAtAACAAAAQAAgAQAAAAACA=</HashCode>
+      <FileName>Inputs\Functions\OrdinatesFunction.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Model.Inputs.Functions.Implementations.BaseImplementation">
+    <Position X="8.5" Y="2.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAEACAAAAAAAgAAANAAAAAAAAAAQAQAAAAAAA=</HashCode>
+      <FileName>Inputs\Functions\Implementations\BaseImplementation.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Model.Inputs.Functions.Implementations.InflowFrequency">
+    <Position X="6.75" Y="6.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAEACAAAAAAIAAAAEQAAAAAAAAAQAQAAAAAAA=</HashCode>
+      <FileName>Inputs\Functions\Implementations\InflowFrequency.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Model.Inputs.Functions.Implementations.InflowOutflow">
+    <Position X="8.5" Y="6.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAACAAAAAAAQAQAAAAAAA=</HashCode>
+      <FileName>Inputs\Functions\Implementations\InflowOutflow.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Model.Inputs.Functions.Implementations.UnUsed">
+    <Position X="10.25" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAQgAAAAAA=</HashCode>
+      <FileName>Inputs\Functions\Implementations\UnUsed.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Model.Inputs.Functions.FunctionFactory">
+    <Position X="8.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ACAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Inputs\Functions\FunctionFactory.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Model.Inputs.Functions.Implementations.ExteriorStageFrequency">
+    <Position X="13.75" Y="6.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAEACAAAAAAIAAAAEQAAAAAAAAAQAQAAAAAAA=</HashCode>
+      <FileName>Inputs\Functions\Implementations\ExteriorStageFrequency.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Model.Inputs.Functions.Implementations.OutflowFrequency">
+    <Position X="10.25" Y="6.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAEACAAAAAAIAAAAEAAAAAAAAAAQAQAAAAAAA=</HashCode>
+      <FileName>Inputs\Functions\Implementations\OutflowFrequency.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Model.Inputs.Functions.Implementations.Rating">
+    <Position X="12" Y="6.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAACAAAAAAAQAQAAAAAAA=</HashCode>
+      <FileName>Inputs\Functions\Implementations\Rating.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Model.Inputs.Functions.FunctionRegistry">
+    <Position X="6.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>IAAAABAAAAAAAAAYAACACggEAAAAAAUASAAAAAAAgAE=</HashCode>
+      <FileName>Inputs\Functions\FunctionRegistry.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Model.Inputs.Functions.UncertainOrdinatesFunction">
+    <Position X="2.25" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAEACAAAAAAAgABAFAACCAAAAAAgAQAAAAACQ=</HashCode>
+      <FileName>Inputs\Functions\UncertainOrdinatesFunction.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Interface Name="Model.Inputs.Functions.IFunctionBase">
+    <Position X="0.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAEAAAAAAAAAAAAABAAAAAAAAAAAAQAAAAACA=</HashCode>
+      <FileName>Inputs\Functions\IFunctionBase.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="Model.Inputs.Functions.IFunctionCompose">
+    <Position X="2.25" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAEAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Inputs\Functions\IFunctionCompose.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="Model.Inputs.Functions.IFunctionTransform">
+    <Position X="4" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAABAACAAAAAAAQAAAAAAAAA=</HashCode>
+      <FileName>Inputs\Functions\IFunctionTransform.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="Model.Inputs.Functions.IFunctionOrdinates">
+    <Position X="0.5" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAACAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Inputs\Functions\IFunctionOrdinates.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Enum Name="Model.Inputs.Functions.FunctionTypeEnum">
+    <Position X="10.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAIAAAIQAABAACAAAAAAAAEAAAAAAAhCCAg=</HashCode>
+      <FileName>Inputs\Functions\FunctionTypeEnum.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

@@ -1,49 +1,52 @@
-﻿namespace Model.Inputs
+﻿using System;
+
+namespace Model.Inputs.Functions
 {
     public sealed class Threshold : IThreshold
     {
-        #region Fields
-        private ThresholdTypes _Type;
-        #endregion
-
         #region Properties
-        public Functions.FunctionType ThresholdFunction { get; private set; }
         public double Value { get; }
         public bool IsValid { get; private set; }
+        public ThresholdTypes ThresholdType { get; }
+        public FunctionTypeEnum ThresholdFunction
+        {
+            get
+            {
+                return AssignThresholdFunction();
+            }
+        }
         #endregion
 
         #region Constructors
         public Threshold(ThresholdTypes type, double value)
         {
-            _Type = type;
             Value = value;
-            AssignThresholdFunction();
+            ThresholdType = type;
         }
         #endregion
 
         #region Methods
-        public void AssignThresholdFunction()
+        public FunctionTypeEnum AssignThresholdFunction()
         {
-            switch (_Type)
+            switch (ThresholdType)
             {
                 case ThresholdTypes.ExteriorStage:
-                    ThresholdFunction = Functions.FunctionType.ExteriorStageFrequency;
-                    break;
+                    return FunctionTypeEnum.ExteriorStageFrequency;
                 case ThresholdTypes.InteriorStage:
-                    ThresholdFunction = Functions.FunctionType.InteriorStageFrequency;
-                    break;
+                    return FunctionTypeEnum.InteriorStageFrequency;
                 case ThresholdTypes.Damages:
-                    ThresholdFunction = Functions.FunctionType.DamageFrequency;
-                    break;
+                    return FunctionTypeEnum.DamageFrequency;
+                default:
+                    throw new NotImplementedException(); 
             }
         }
         #endregion
-    }
 
-    public enum ThresholdTypes
-    {
-        ExteriorStage = 0,
-        InteriorStage = 1,
-        Damages = 2,
+        public enum ThresholdTypes
+        {
+            ExteriorStage = 0,
+            InteriorStage = 1,
+            Damages = 2,
+        }
     }
 }

@@ -1,6 +1,6 @@
 ﻿namespace Model.Inputs.Functions
 {
-    public enum FunctionType
+    public enum FunctionTypeEnum
     {
         NotSet = 0,
         InflowFrequency = 1,            //AnnualExceedanceChance-> InflowPeakDischarge

@@ -1,8 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
-namespace Model.Inputs.Functions
+namespace Model.Inputs.Functions.Implementations
 {
-    public abstract class Decorator: IFunction //FunctionBase //Database.IEntity?
+    public abstract class BaseImplementation 
     {
         #region Notes
         //1. Does the function type really need to be public.
@@ -15,26 +16,35 @@ namespace Model.Inputs.Functions
         */
         #endregion
 
-        #region Properties
-        public IFunction Function { get; protected set; }
-        public abstract FunctionType Type { get; }
+        #region Properties              
+        protected IFunctionBase Function;
         public bool IsValid { get; protected set; }
+        public abstract FunctionTypeEnum Type { get; }
         #endregion
 
         #region Constructor
-        protected Decorator(IFunction function) { Function = function; }
+        protected BaseImplementation(IFunctionBase function) { Function = function; }
         #endregion
 
         #region Methods
-        public virtual bool Validate() { return Function.IsValid; }
+        public abstract double GetXfromY(double y);
+        public BaseImplementation Sample(Random randomNumberGenerator)
+        {
+            return FunctionFactory.CreateNew(Function.Sample(randomNumberGenerator), Type);
+        }
+        protected IList<Tuple<double, double>> Compose(List<Tuple<double, double>> transformOrdiantes)
+        {
+            return Function.Compose(transformOrdiantes);
+        }
+        #endregion
 
+        #region IValidateData Methods
+        public virtual bool Validate()
+        {
+            if (Function.IsValid == false) ReportValidationErrors();
+            return Function.IsValid;
+        }
         public virtual IEnumerable<string> ReportValidationErrors() { return Function.ReportValidationErrors(); }
-
-        public virtual double GetXfromY(double y) { return Function.GetXfromY(y); }
-
-        //public abstract IComputableFunction Compute(IFunction transformFunction);
-
-        //public void Compose(ICondition condition)
         #endregion
     }
 }

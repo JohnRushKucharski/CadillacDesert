@@ -9,7 +9,7 @@ using System.ComponentModel.DataAnnotations;
 namespace Model
 {
 
-    //[Author("John Kucharski", "23 May 2017")]
+    [Author("John Kucharski", "23 May 2017")]
     public sealed class Project : IProject, DataBase.IEntityData, IValidatedData
     {
 
@@ -18,7 +18,7 @@ namespace Model
         // Messaging when project singleton is called incorrectly.
         #endregion
 
-        #region Fields (without Auto Implemented Properties)
+        #region Fields
         private bool _IsValid;
         #endregion
 

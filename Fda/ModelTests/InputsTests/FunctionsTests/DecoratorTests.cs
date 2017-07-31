@@ -14,8 +14,8 @@ namespace ModelTests
             double y = 2.5;
             double[] xs = new double[2] { 0, 1 }, ys = new double[2] { 2, 3 };
             Statistics.CurveIncreasing testOrdinatesFunction = new Statistics.CurveIncreasing(xs, ys, true, false);
-            IFunction testFunction1 = FunctionFactory.CreateNew(testOrdinatesFunction, FunctionType.NotSet);
-            IFunction testFunction2 = FunctionFactory.CreateNew(new Statistics.LogPearsonIII(1, 0.1, 0, 100), FunctionType.NotSet);
+            IFunction testFunction1 = FunctionFactory.CreateNew(testOrdinatesFunction, FunctionTypeEnum.NotSet);
+            IFunction testFunction2 = FunctionFactory.CreateNew(new Statistics.LogPearsonIII(1, 0.1, 0, 100), FunctionTypeEnum.NotSet);
 
             //Act
             double actualExpect0Point5 = testFunction1.GetXfromY(y);

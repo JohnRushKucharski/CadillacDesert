@@ -8,6 +8,7 @@ namespace ModelTests
     [TestClass()]
     public class ProjectTests
     {
+        #region CreateNewProject() Tests
         [TestMethod()]
         public void CreateNewProject_NullInstanceNoPathReturnsCurrentDirectory()
         {
@@ -34,7 +35,9 @@ namespace ModelTests
             //Assert
             Assert.AreEqual(Project.Instance.GetFilePathWithoutExtension(), secondProject.GetFilePathWithoutExtension());
         }
+        #endregion
 
+        #region ValidateDirectory() Tests
         [TestMethod()]
         public void ValidateDirectory_BadDirectoryReturnsFalse()
         {
@@ -69,7 +72,9 @@ namespace ModelTests
             if (new System.IO.FileInfo(goodPathPlusFileName).Exists) Assert.AreEqual(false, Project.Instance.ValidateDirectory(goodPathPlusFileName));
             else Assert.Fail("The test directory plus file path do not exist");
         }
+        #endregion
 
+        #region ValidateName() Tests
         [TestMethod()]
         public void ValidateFileName_FileNamePlusExtensionReturnsFalse()
         {
@@ -121,26 +126,18 @@ namespace ModelTests
             //Assert
             Assert.AreEqual(true, actual);
         }
+        #endregion
 
+        #region Write() Tests
         [TestMethod()]
         public void Write_CreatesNewFileIfNonExists()
         {
             //Arrange
             bool fileExists;
             Project testProject = Project.CreateNewProject("testProject");
-
-            double[] xs = new double[2] { 0, 1 }, ys = new double[2] { 2, 3 };
-            Statistics.CurveIncreasing testFunction = new Statistics.CurveIncreasing(xs, ys, true, false);
-            OutflowFrequencyDecorator testDecorator = (OutflowFrequencyDecorator)FunctionFactory.CreateNew(testFunction, Model.Inputs.Functions.FunctionType.OutflowFrequency);
-
-            //Act
-            //if (new System.IO.FileInfo(Project.Instance.GetFilePathWithoutExtension() + ".sqlite").Exists) new System.IO.FileInfo(Project.Instance.GetFilePathWithoutExtension() + ".sqlite").Delete();
             System.IO.FileInfo temporaryDatabase = new System.IO.FileInfo(Project.Instance.GetFilePathWithoutExtension() + ".sqlite");
-
             
-            //Project.Instance.Write();
-            //Model.Inputs.Functions.DecoratorList.Instance.Write();
-            //testDecorator.Write();
+            Project.Instance.Write();
             fileExists = temporaryDatabase.Exists;
 
             //Assert
@@ -161,7 +158,9 @@ namespace ModelTests
             //Assert
             Assert.AreEqual(true, temporaryDatabase.Exists);
         }
+        #endregion
 
+        #region IsValid Property Tests
         [TestMethod()]
         public void IsValidGetter_ReturnsValidateMethodValue()
         {
@@ -174,5 +173,6 @@ namespace ModelTests
             //Assert
             Assert.AreEqual(isValid, testProject.Validate());
         }
+        #endregion
     }
 }

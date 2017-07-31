@@ -6,19 +6,32 @@ using System.Threading.Tasks;
 
 namespace Model.Inputs.Functions
 {
-    public sealed class Condition: ICondition
+    public sealed class Condition : ICondition
     {
         #region Fields
-        private int _Year;
-        private double _EAD;
-        private double _AEP;
-        private IThreshold _Threshold;
-        private IComputableFunction _EntryFunction;
-        private IList<IFunction> _TransformFunctions;
-        private IList<IComputableFunction> _FrequencyFunctions;
+        private IFunction _EntryFunction;
+        private IList<IFunction> _FrequencyFunctions;
+        private IList<IFunctionTransform> _TransformFunctions;
         #endregion
 
         #region Properties
+        public bool IsBaseline { get; }
+        public int Year { get; private set; }
+        public string Name { get; private set;}
+        public string Id
+        {
+            get
+            {
+                return new StringBuilder(Year.ToString()).Append(Name).ToString();
+            }
+        }
+
+        public IList<Tuple<IThreshold, double>> EAD { get; }
+        public IList<Tuple<IThreshold, double>> AEP { get; }
+
+        
+
+
         IEnumerable<IFunction> GetConditionFunctions
         {
             get
@@ -33,7 +46,7 @@ namespace Model.Inputs.Functions
                 return _TransformFunctions[_TransformFunctions.Count];
             }
         }
-        public IComputableFunction GetCurrentFrequencyFunction
+        public IFunction GetCurrentFrequencyFunction
         {
             get
             {
@@ -44,21 +57,26 @@ namespace Model.Inputs.Functions
         #endregion
 
         #region Constructor
-        public Condition(IComputableFunction entryFunction, IEnumerable<IFunction> transformFunctions, IThreshold threshold)
+        public Condition(string name, int year, IThreshold threshold)
+        {
+            Id = name + year + threshold.ThresholdFunction;
+        }
+
+        public Condition(IFunction entryFunction, IEnumerable<IFunctionTransform> transformFunctions, IThreshold threshold)
         {
             _Year = DateTime.Today.Year;
             _EntryFunction = entryFunction;
-            _FrequencyFunctions = new List<IComputableFunction>() { _EntryFunction };
+            _FrequencyFunctions = new List<IFunction>() { _EntryFunction };
             _TransformFunctions = transformFunctions.ToList();
             _Threshold = threshold;
             ReportValidationErrors();
         }
         
-        public Condition(IComputableFunction entryFunction, IEnumerable<IFunction> transformFunctions, IThreshold threshold, int year)
+        public Condition(IFunction entryFunction, IEnumerable<IFunctionTransform> transformFunctions, IThreshold threshold, int year)
         {
             _Year = year;
             _EntryFunction = entryFunction;
-            _FrequencyFunctions = new List<IComputableFunction>() { _EntryFunction };
+            _FrequencyFunctions = new List<IFunction>() { _EntryFunction };
             _TransformFunctions = transformFunctions.ToList();
             _Threshold = threshold;
             ReportValidationErrors();

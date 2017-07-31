@@ -7,9 +7,11 @@ using System.Threading.Tasks;
 namespace Model.Inputs.Functions
 {
     public interface ICondition: IValidateData
-    { 
-        IComputableFunction GetCurrentFrequencyFunction { get; }
-        IFunction GetCurrentTransformFunction { get; }
+    {
+        string Id { get; }
+
+        IFunctionCompose GetCurrentFrequencyFunction { get; }
+        IFunctionTransform GetCurrentTransformFunction { get; }
 
     }
 }

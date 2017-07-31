@@ -84,11 +84,17 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
-    <Compile Include="Inputs\Functions\DecoratorTests.cs" />
-    <Compile Include="Inputs\ConditionTests.cs" />
+    <Compile Include="InputsTests\FunctionsTests\FrequencyFunctionTests.cs" />
+    <Compile Include="InputsTests\FunctionsTests\FunctionFactoryTests.cs" />
+    <Compile Include="InputsTests\FunctionsTests\ImplementationsTests\ExteriorStageFrequencyTests.cs" />
+    <Compile Include="InputsTests\FunctionsTests\FunctionRegistryTests.cs" />
+    <Compile Include="InputsTests\FunctionsTests\ImplementationsTests\InflowFrequencyTests.cs" />
+    <Compile Include="InputsTests\FunctionsTests\ImplementationsTests\InflowOutflowTests.cs" />
+    <Compile Include="InputsTests\FunctionsTests\ImplementationsTests\OutflowFrequencyTests.cs" />
+    <Compile Include="InputsTests\FunctionsTests\OrdinatesFunctionTests.cs" />
+    <Compile Include="InputsTests\WaterSurfaceProfileTests.cs" />
     <Compile Include="ProjectTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Inputs\Functions\OrdinatesFunctionTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\FdaModel\Model.csproj">
