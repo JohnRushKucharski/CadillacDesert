@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace Model.Inputs.Functions
 {
-    internal sealed class OrdinatesFunction: IFunctionBase, IFunctionOrdinates //FunctionBase //Database.IEntity
+    internal sealed class OrdinatesFunction: IFunctionBase
     {
         #region Fields
         private Statistics.CurveIncreasing _Function;
@@ -45,21 +45,26 @@ namespace Model.Inputs.Functions
         #endregion
 
         #region IFunctionBase Methods
-        public bool ValidateFrequencyValues(FunctionTypeEnum type)
+        public bool ValidateFrequencyValues()
         {
-            if (!((int)type % 2 == 0))
-            {
-                if (Ordinates[0].Item1 <= 0 ||
-                    Ordinates[0].Item1 >= 1 ||
-                    Ordinates[Function.Count - 1].Item1 <= 0 ||
-                    Ordinates[Function.Count - 1].Item1 >= 1) return false;
-                else return true;
-            }
-            else return false;
+           if (Ordinates[0].Item1 <= 0 ||
+               Ordinates[0].Item1 >= 1 ||
+               Ordinates[Function.Count - 1].Item1 <= 0 ||
+               Ordinates[Function.Count - 1].Item1 >= 1) return false;
+           else return true;
         }
-        public IFunctionBase Sample(Random randomNumberGenerator)
+        /// <summary>
+        /// Since the Y ordinate values are expressed as point estimates, instead of distribution functions, this method returns the intance of ordinates function to which the method refers.
+        /// </summary>
+        /// <param name="probability"> All input values return the same result. A default value of double.NaN is provided. </param>
+        /// <returns> The current instance of the ordinates function. </returns>
+        public IFunctionBase Sample(double probability = double.NaN)
         {
             return this;
+        }
+        public IList<Tuple<double, double>> GetOrdinates()
+        {
+            return Ordinates;
         }
         public IList<Tuple<double, double>> Compose(IList<Tuple<double, double>> transformOrdinates)
         {
@@ -144,16 +149,87 @@ namespace Model.Inputs.Functions
         }
         public double GetXfromY(double y)
         {
-            if (Function.get_Y(0) >= y) return Function.get_X(0);
-            if (Function.get_Y(Function.Count - 1) <= y) return Function.get_X(Function.Count - 1);
+            if (Ordinates[0].Item2 >= y) return Ordinates[0].Item1;
+            if (Ordinates[Ordinates.Count - 1].Item2 <= y) return Ordinates[Ordinates.Count - 1].Item1;
 
             int i = 0;
-            while (Function.get_Y(i + 1) < y)
+            while (Ordinates[i + 1].Item2 < y)
             {
                 i++;
             }
-            return Function.get_X(i) + (y - Function.get_Y(i)) / (Function.get_Y(i + 1) - Function.get_Y(i)) * (Function.get_X(i + 1) - Function.get_X(i));
+            return Ordinates[i].Item1 + (y - Ordinates[i].Item2) / (Ordinates[i + 1].Item2 - Ordinates[i].Item2) * (Ordinates[i + 1].Item1 - Ordinates[i].Item1);
         }
+        public double GetYfromX(double x)
+        {
+            if (Ordinates[0].Item1 >= x) return Ordinates[0].Item2;
+            if (Ordinates[Ordinates.Count - 1].Item1 <= x) return Ordinates[Ordinates.Count - 1].Item2;
+
+            int i = 0;
+            while (Ordinates[i + 1].Item1 < x)
+            {
+                i++;
+            }
+            return Ordinates[i].Item2 + (x - Ordinates[i].Item1) / (Ordinates[i + 1].Item1 - Ordinates[i].Item1) * (Ordinates[i + 1].Item2 - Ordinates[i].Item2);
+        }
+        public double TrapezoidalRiemannSum()
+        {
+            double riemannSum = 0;
+            for (int i = 0; i < Function.Count - 1; i++)
+            {
+                riemannSum += (Function.get_Y(i + 1) + Function.get_Y(i)) * (Function.get_X(i + 1) - Function.get_X(i)) / 2;
+            }
+            return riemannSum;
+        }
+        
+        private IList<Tuple<double, double>> Aggregate(IList<Tuple<double, double>> addOrdinates)
+        {
+            int i = 0, I = Ordinates.Count - 1, j = 0, J = addOrdinates.Count - 1;
+            IList<Tuple<double, double>> aggregatedOrdinates = new List<Tuple<double, double>>();
+            if (Ordinates[0].Item1 < addOrdinates[0].Item1) i = IndexBelowOverlap(Ordinates, addOrdinates[0].Item1, out aggregatedOrdinates);     
+            if (Ordinates[0].Item1 > addOrdinates[0].Item1) j = IndexBelowOverlap(addOrdinates, Ordinates[0].Item1, out aggregatedOrdinates);
+            //if (i == I || j == J) return aggregatedOrdinates;
+
+            int n = 0, N = (I - i) + (J - j);
+            while (n < N + 1)
+            {
+                if (Ordinates[i].Item1 < addOrdinates[j].Item1) aggregatedOrdinates.Add(Ordinates[i].Item1, Ordinates[i].Item2 + ())
+
+            }
+            while (i < I + 1)
+            {
+                
+            }
+
+        }
+        private IFunctionBase Aggregate(IFunctionBase functionToAggregate)
+        {
+            IList<Tuple<double, double> addOrdinates
+            IFunctionBase lowerOrdinates, higherOrdinates;
+            if (Ordinates[0].Item1 < addOrdinates.GetOrdinates().Ordinates[0].Item1) { lowerOrdinates = Ordinates; higherOrdinates = addOrdinates; }
+            else { lowerOrdinates = addOrdinates; higherOrdinates = Ordinates; }
+
+            int i = 0, j = 0, I = lowerOrdinates.Count, J = higherOrdinates.Count;
+            while (lowerOrdinates[i].Item1 < higherOrdinates[j].Item1)
+            {
+                double newStage = lowerOrdinates[i].Item1;
+                
+            }
+        }
+
+
+        private int IndexBelowOverlap(IList<Tuple<double, double>> lowerOrdinates, double firstSharedX, out IList<Tuple<double, double>> newOrdinates)
+        {
+            int n = 0, N = lowerOrdinates.Count - 1;
+            newOrdinates = new List<Tuple<double, double>>();
+            while (lowerOrdinates[n].Item1 < firstSharedX)
+            {
+                newOrdinates.Add(lowerOrdinates[n]);
+                if (n == N) break;
+                else n++;
+            }
+            return n;
+        }
+        
         #endregion
 
         #region IValidateData Methods

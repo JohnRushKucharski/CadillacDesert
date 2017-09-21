@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using Model.Inputs.Functions.Implementations;
+using Model.Inputs.Functions.ComputationPoint;
 
 namespace Model.Inputs.Functions
 {
     public interface IFunctionTransform: IValidateData
     {
-        FunctionTypeEnum Type { get; }
+        ComputationPointFunctionEnum Type { get; }
         IList<Tuple<double, double>> Ordinates { get; }
-        BaseImplementation Sample(Random randomNumberGenerator);
+        IFunctionTransform Sample(double probability);
     }
 }

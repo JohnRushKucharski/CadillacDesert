@@ -22,6 +22,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <DocumentationFile>bin\Debug\Model.XML</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -74,28 +75,47 @@
   <ItemGroup>
     <Compile Include="DataBase\DataContext.cs" />
     <Compile Include="DataBase\IEntityData.cs" />
-    <Compile Include="Inputs\Functions\FunctionRegistry.cs" />
+    <Compile Include="Inputs\Conditions\ComputePointUnitTypeEnum.cs" />
+    <Compile Include="Inputs\Conditions\Condition.cs" />
+    <Compile Include="Inputs\Functions\ComputationPoint\DamageFrequency.cs" />
+    <Compile Include="Inputs\Functions\ComputationPoint\InteriorStageDamage.cs" />
+    <Compile Include="Inputs\Functions\ComputationPoint\InteriorStageFrequency.cs" />
     <Compile Include="Inputs\Functions\FrequencyFunction.cs" />
-    <Compile Include="Inputs\Functions\IFunctionRegistry.cs" />
     <Compile Include="Inputs\Functions\IFunctionTransform.cs" />
-    <Compile Include="Inputs\Functions\Implementations\BaseImplementation.cs" />
-    <Compile Include="Inputs\Functions\FunctionFactory.cs" />
-    <Compile Include="Inputs\Functions\FunctionTypeEnum.cs" />
+    <Compile Include="Inputs\Functions\ComputationPoint\ComputationPointFunctionBase.cs" />
+    <Compile Include="Inputs\Functions\ComputationPoint\ComputationPointFunctionFactory.cs" />
+    <Compile Include="Inputs\Functions\ComputationPoint\ComputationPointFunctionEnum.cs" />
     <Compile Include="Inputs\Functions\IFunctionCompose.cs" />
     <Compile Include="Inputs\Functions\IFunctionBase.cs" />
-    <Compile Include="Inputs\Functions\IFunctionOrdinates.cs" />
-    <Compile Include="Inputs\Functions\Implementations\ExteriorStageFrequency.cs" />
-    <Compile Include="Inputs\Functions\Implementations\ExteriorInteriorStage.cs" />
-    <Compile Include="Inputs\Functions\Implementations\Rating.cs" />
-    <Compile Include="Inputs\Functions\Implementations\UnUsed.cs" />
-    <Compile Include="Inputs\Functions\Implementations\InflowFrequency.cs" />
-    <Compile Include="Inputs\Functions\Implementations\InflowOutflow.cs" />
+    <Compile Include="Inputs\Functions\ComputationPoint\ExteriorStageFrequency.cs" />
+    <Compile Include="Inputs\Functions\ComputationPoint\ExteriorInteriorStage.cs" />
+    <Compile Include="Inputs\Functions\ComputationPoint\Rating.cs" />
+    <Compile Include="Inputs\Functions\ComputationPoint\UnUsed.cs" />
+    <Compile Include="Inputs\Functions\ComputationPoint\InflowFrequency.cs" />
+    <Compile Include="Inputs\Functions\ComputationPoint\InflowOutflow.cs" />
+    <Compile Include="Inputs\Functions\ComputationPoint\IStageDamageTransform.cs" />
     <Compile Include="Inputs\Functions\OrdinatesFunction.cs" />
-    <Compile Include="Inputs\Functions\Implementations\OutflowFrequency.cs" />
+    <Compile Include="Inputs\Functions\ComputationPoint\OutflowFrequency.cs" />
+    <Compile Include="Inputs\Functions\PercentDamageFunctions\DepthPercentDamage.cs" />
+    <Compile Include="Inputs\Functions\PercentDamageFunctions\IPercentDamageFunction.cs" />
     <Compile Include="Inputs\Functions\UncertainOrdinatesFunction.cs" />
-    <Compile Include="Inputs\IThreshold.cs" />
-    <Compile Include="Inputs\Threshold.cs" />
-    <Compile Include="Inputs\WaterSurfaceProfile.cs" />
+    <Compile Include="Inputs\Conditions\ICondition.cs" />
+    <Compile Include="Inputs\Inventories\Assets\Asset.cs" />
+    <Compile Include="Inputs\Inventories\Assets\IAsset.cs" />
+    <Compile Include="Inputs\Inventories\Assets\AssetSampled.cs" />
+    <Compile Include="Inputs\Inventories\Inventory.cs" />
+    <Compile Include="Inputs\Inventories\InventoryElements\IInventoryElement.cs" />
+    <Compile Include="Inputs\Inventories\OccupancyTypes\IOccupancyGroup.cs" />
+    <Compile Include="Inputs\Inventories\OccupancyTypes\IOccupancyType.cs" />
+    <Compile Include="Inputs\Inventories\OccupancyTypes\OccupancyGroup.cs" />
+    <Compile Include="Inputs\Inventories\OccupancyTypes\OccupancyType.cs" />
+    <Compile Include="Inputs\Inventories\AssetTypeEnum.cs" />
+    <Compile Include="Inputs\Conditions\ComputePoint.cs" />
+    <Compile Include="Inputs\Inventories\InventoryElements\ElementBase.cs" />
+    <Compile Include="Inputs\Inventories\OccupancyTypes\OccupancyTypeSampled.cs" />
+    <Compile Include="Inputs\Inventories\StageDamageInventory.cs" />
+    <Compile Include="Inputs\IWaterSurfaceProfiles.cs" />
+    <Compile Include="Inputs\WaterSurfaceProfiles.cs" />
     <Compile Include="IProject.cs" />
     <Compile Include="IValidateData.cs" />
     <Compile Include="IValidatedData.cs" />
@@ -115,6 +135,7 @@
       <SubType>Designer</SubType>
     </None>
     <None Include="Inputs\Functions\ClassDiagramFunctions.cd" />
+    <None Include="Inputs\Inventories\ClassDiagramInventoryElements.cd" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>

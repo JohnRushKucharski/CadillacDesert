@@ -10,7 +10,7 @@ namespace Model
 {
 
     [Author("John Kucharski", "23 May 2017")]
-    public sealed class Project : IProject, DataBase.IEntityData, IValidatedData
+    public sealed class Project : IProject, DataBase.IEntityData, IValidateData
     {
 
         #region Notes
@@ -66,6 +66,11 @@ namespace Model
         {
             if (ValidateDirectory(Directory) && ValidateName(Name)) return true;
             else return false;
+        }
+
+        public IEnumerable<string> ReportValidationErrors()
+        {
+            throw new NotImplementedException();
         }
 
         public bool ValidateDirectory(string fileDirectory = null)

@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace Model
 {
-    public interface IValidateData: IValidatedData
+    public interface IValidateData
     {
-        bool Validate();
+        bool IsValid { get; }
         IEnumerable<string> ReportValidationErrors();
     }
 }

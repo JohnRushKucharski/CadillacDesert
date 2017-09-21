@@ -51,14 +51,18 @@ namespace Model.Inputs.Functions
         #endregion
 
         #region IFunctionBase Methods
-        public bool ValidateFrequencyValues(FunctionTypeEnum type)
+        public bool ValidateFrequencyValues()
         {
             return true;
         }
-        public IFunctionBase Sample(Random randomNumberGenerator)
+        public IFunctionBase Sample(double probability)
         {
             //WTF. List<double> How big, why a list?
             return new FrequencyFunction(new Statistics.LogPearsonIII(Function.getParametricBootStrapSample()));
+        }
+        public IList<Tuple<double, double>> GetOrdinates()
+        {
+            throw new NotImplementedException();
         }
         public IList<Tuple<double, double>> Compose(IList<Tuple<double, double>> transformOrdinates)
         {
@@ -131,6 +135,21 @@ namespace Model.Inputs.Functions
         {
             return Function.GetCDF(y);
         }
+        public double GetYfromX(double x)
+        {
+            return Function.getDistributedVariable(x);
+        }
+        public double TrapezoidalRiemannSum()
+        {
+            double riemannSum = 0;
+            IList<Tuple<double, double>> ordinates = GetOrdinates();
+            for (int i = 0; i < ordinates.Count - 1; i++)
+            {
+                riemannSum += (ordinates[i + 1].Item2 + ordinates[i].Item2) * (ordinates[i + 1].Item1 - ordinates[i].Item1) / 2;
+            }
+            return riemannSum;
+        }
+
         #endregion
 
         #region IValidateData Methods

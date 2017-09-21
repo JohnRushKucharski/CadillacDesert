@@ -5,8 +5,7 @@ namespace Model.Inputs.Functions
 {
     public interface IFunctionRegistry
     {
-        IEnumerable<string> NamedFunctions { get; }
-        IEnumerable<Tuple<string, IFunctionTransform>> TransformFunctions { get; }
-
+        IReadOnlyCollection<string> NamedFunctions { get; }
+        //Data Reading and Writing...
     }
 }

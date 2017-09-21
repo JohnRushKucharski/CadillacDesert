@@ -1,6 +1,6 @@
 ﻿using System;
 using Model.Inputs.Functions;
-using Model.Inputs.Functions.Implementations;
+using Model.Inputs.Functions.ComputationPoint;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Generic;
 
@@ -19,94 +19,52 @@ namespace ModelTests.InputsTests.FunctionsTests
         [TestMethod()]
         public void Validate_GoodDataReturnsTrue()
         {
-
-            BaseImplementation testOrdinatesFunction = FunctionFactory.CreateNew(defaultCurveIncreasing, FunctionTypeEnum.NotSet);
+            OrdinatesFunction testOrdinatesFunction = new OrdinatesFunction(defaultCurveIncreasing);
             Assert.IsTrue(testOrdinatesFunction.IsValid);
         }
         [TestMethod()]
         public void Validate_SingleOrdinateReturnsFalse()
         {
-            //Arrange
-            double[] testXs = new double[1] { 1 };
-            double[] testYs = new double[1] { 2 };
-            Statistics.CurveIncreasing testCurveIncreasing = new Statistics.CurveIncreasing(testXs, testYs, true, false);
-            BaseImplementation testOrdinatesFunction = FunctionFactory.CreateNew(testCurveIncreasing, FunctionTypeEnum.NotSet);
-            //Assert
+            OrdinatesFunction testOrdinatesFunction = new OrdinatesFunction(new Statistics.CurveIncreasing(new double[] { 1 }, new double[] { 2 }, true, false));
             Assert.IsFalse(testOrdinatesFunction.IsValid);
         }
         [TestMethod()]
         public void Validate_RepeatingOrdinatesRemoved()
         {
-            //Arrange
-            double[] testXs = new double[3] { 0, 1, 1 };
-            double[] testYs = new double[3] { 2, 3, 3 };
-            Statistics.CurveIncreasing testCurveIncreasing = new Statistics.CurveIncreasing(testXs, testYs, true, false);
-            BaseImplementation testOrdinatesFunction = FunctionFactory.CreateNew(testCurveIncreasing, FunctionTypeEnum.NotSet);
-            //Act
-            List<double> expectedXs = new List<double>() { 0, 1 }, expectedYs = new List<double>() { 2, 3 };
-            List<double> actualXs = new List<double>(), actualYs = new List<double>();
-            for (int i = 0; i < testCurveIncreasing.Count; i++)
-            {
-                actualXs.Add(testCurveIncreasing.get_X(i));
-                actualYs.Add(testCurveIncreasing.get_Y(i));
-            }
-            //Assert
-            Assert.AreEqual(expectedXs[0], actualXs[0]);
-            Assert.AreEqual(expectedXs[1], actualXs[1]);
-            Assert.AreEqual(expectedYs[0], actualYs[0]);
-            Assert.AreEqual(expectedYs[1], actualYs[1]);
-            Assert.AreEqual(testXs.Length - 1, testCurveIncreasing.Count);
+            OrdinatesFunction actualOrdinatesFunction = new OrdinatesFunction(new Statistics.CurveIncreasing(new double[] { 0, 1, 1 }, new double[] { 2, 3, 3 }, true, false));
+            OrdinatesFunction expectOrdinatesFunction = new OrdinatesFunction(new Statistics.CurveIncreasing(new double[] { 0, 1 }, new double[] { 2, 3 }, true, false));
+            CollectionAssert.AreEqual((List<Tuple<double, double>>)expectOrdinatesFunction.Ordinates, (List<Tuple<double, double>>)actualOrdinatesFunction.Ordinates);
         }
 
         [TestMethod()]
         public void Validate_RepeatingOrdinatesRemovedReturnsTrue()
         {
-            //Arrange
-            double[] testXs = new double[3] { 0, 1, 1 };
-            double[] testYs = new double[3] { 2, 3, 3 };
-            Statistics.CurveIncreasing testCurveIncreasing = new Statistics.CurveIncreasing(testXs, testYs, true, false);
-            BaseImplementation testOrdinatesFunction = FunctionFactory.CreateNew(testCurveIncreasing, FunctionTypeEnum.NotSet);
-            //Assert
-            Assert.IsTrue(testOrdinatesFunction.IsValid);
+            OrdinatesFunction actualOrdinatesFunction = new OrdinatesFunction(new Statistics.CurveIncreasing(new double[] { 0, 1, 1 }, new double[] { 2, 3, 3 }, true, false));
+            Assert.IsTrue(actualOrdinatesFunction.IsValid);
         }
 
         [TestMethod()]
         public void Validate_TooManyRepeatingOrdinatesRemovedReturnsFalse()
         {
-            //Arrange
-            double[] testXs = new double[3] { 0, 0, 0 };
-            double[] testYs = new double[3] { 2, 2, 2 };
-            Statistics.CurveIncreasing testCurveIncreasing = new Statistics.CurveIncreasing(testXs, testYs, true, false);
-            BaseImplementation testOrdinatesFunction = FunctionFactory.CreateNew(testCurveIncreasing, FunctionTypeEnum.NotSet);
-            //Assert
+            OrdinatesFunction testOrdinatesFunction = new OrdinatesFunction(new Statistics.CurveIncreasing(new double[3] { 0, 0, 0 }, new double[3] { 2, 2, 2 }, true, false));
             Assert.IsFalse(testOrdinatesFunction.IsValid);
-            Assert.AreEqual(1, testCurveIncreasing.Count);
+            Assert.AreEqual(1, testOrdinatesFunction.Ordinates.Count);
         }
         #endregion
 
         #region ValidateFrequencyValues() Tests
         [TestMethod()]
-        public void ValidateFrequencyValues_FrequencyTypePlusGoodValuesReturnTrue()
+        public void ValidateFrequencyValues_GoodValuesReturnTrue()
         {
-            FunctionTypeEnum testFrequencyType = FunctionTypeEnum.OutflowFrequency;
             OrdinatesFunction testOrdinatesFunction = new OrdinatesFunction(defaultFrequencyOrdinates);
-            Assert.IsTrue(testOrdinatesFunction.ValidateFrequencyValues(testFrequencyType));
+            Assert.IsTrue(testOrdinatesFunction.ValidateFrequencyValues());
         }
 
         [TestMethod()]
-        public void ValidateFrequencyValues_FrequencyTypePlusBadValuesReturnsFalse()
+        public void ValidateFrequencyValues_BadValuesReturnsFalse()
         {
-            FunctionTypeEnum testFrequencyType = FunctionTypeEnum.OutflowFrequency;
             OrdinatesFunction testOrdinatesFunction = new OrdinatesFunction(defaultCurveIncreasing);
-            Assert.IsFalse(testOrdinatesFunction.ValidateFrequencyValues(testFrequencyType));
-        }
-
-        [TestMethod()]
-        public void ValidateFrequencyValues_NotFrequencyTypePlusGoodValuesReturnsFalse()
-        {
-            FunctionTypeEnum testFrequencyType = FunctionTypeEnum.InflowOutflow;
-            OrdinatesFunction testOrdinatesFunction = new OrdinatesFunction(defaultFrequencyOrdinates);
-            Assert.IsFalse(testOrdinatesFunction.ValidateFrequencyValues(testFrequencyType));
+            Assert.IsFalse(testOrdinatesFunction.ValidateFrequencyValues());
         }
         #endregion
 
@@ -173,8 +131,71 @@ namespace ModelTests.InputsTests.FunctionsTests
         }
         #endregion
 
+        #region GetYfromX() Tests
+        [TestMethod()]
+        public void GetYfromX_TinyXReturnsSmallestY()
+        {
+            double x = -1;
+            IFunctionBase testOrdinatesFunction = new OrdinatesFunction(defaultCurveIncreasing);
+            Assert.AreEqual(2, testOrdinatesFunction.GetYfromX(x));
+        }
+        [TestMethod()]
+        public void GetYfromX_SmallestXReturnsSmallestY()
+        {
+            double x = 0;
+            IFunctionBase testOrdinatesFunction = new OrdinatesFunction(defaultCurveIncreasing);
+            Assert.AreEqual(2, testOrdinatesFunction.GetYfromX(x));
+        }
+
+        [TestMethod()]
+        public void GetYfromX_GiantXReturnsLargestY()
+        {
+            double x = 100;
+            IFunctionBase testOrdinatesFunction = new OrdinatesFunction(defaultCurveIncreasing);
+            Assert.AreEqual(3, testOrdinatesFunction.GetYfromX(x));
+        }
+
+        [TestMethod()]
+        public void GetYfromX_LargestXReturnsLargestY()
+        {
+            double x = 1;
+            IFunctionBase testOrdinatesFunction = new OrdinatesFunction(defaultCurveIncreasing);
+            Assert.AreEqual(3, testOrdinatesFunction.GetYfromX(x));
+        }
+
+        [TestMethod()]
+        public void GetYfromX_InbetweenXReturnsInterpolatedY()
+        {
+            double x = 0.5;
+            IFunctionBase testOrdinatesFunction = new OrdinatesFunction(defaultCurveIncreasing);
+            Assert.AreEqual(2.5, testOrdinatesFunction.GetYfromX(x));
+        }
+
+        [TestMethod()]
+        public void GetYfromX_InbetweenXReturnsRightInterpolationOrdinatesY()
+        {
+            //Arrange
+            double x = 2.3;
+            double[] testXs = new double[5] { 0, 1, 2, 3, 4 }, testYs = new double[5] { 5, 6, 7, 8, 9 };
+            Statistics.CurveIncreasing testCurveIncreasing = new Statistics.CurveIncreasing(testXs, testYs, true, false);
+            IFunctionBase testOrdinatesFunction = new OrdinatesFunction(testCurveIncreasing);
+            Assert.AreEqual(7.3, testOrdinatesFunction.GetYfromX(x));
+        }
+
+        [TestMethod()]
+        public void GetYfromX_MatchingXsReturnsRightInterpolationOrdinatesY()
+        {
+            //Arrange
+            double x = 3;
+            double[] testXs = new double[5] { 0, 1, 2, 3, 4 }, testYs = new double[5] { 5, 6, 7, 8, 9 };
+            Statistics.CurveIncreasing testCurveIncreasing = new Statistics.CurveIncreasing(testXs, testYs, true, false);
+            IFunctionBase testOrdinatesFunction = new OrdinatesFunction(testCurveIncreasing);
+            Assert.AreEqual(8, testOrdinatesFunction.GetYfromX(x));
+        }
+        #endregion
+
         #region Compose() Tests
-        
+
         [TestMethod()]
         public void Compose_LowerTransformNoOverlapReturns_DoubleNaNYValueOrdinates()
         {

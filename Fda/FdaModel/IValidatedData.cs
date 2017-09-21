@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace Model
 {
-    public interface IValidatedData
-    {
-        bool IsValid { get; }
-    }
+    //public interface IValidatedData
+    //{
+    //    bool IsValid { get; }
+    //}
 }
