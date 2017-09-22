@@ -6,8 +6,9 @@ using System.Threading.Tasks;
 
 namespace Model.Inputs
 {
-    public interface IWaterSurfaceProfiles: IValidateData
+    internal interface IImapactArea: IValidateData
     {
-        IDictionary<float, Statistics.CurveIncreasing> Profiles { get; }
+        string Name { get; }
+        float ComputationPoint { get; }
     }
 }

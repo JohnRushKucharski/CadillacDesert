@@ -100,9 +100,12 @@
     <Compile Include="Inputs\Functions\PercentDamageFunctions\IPercentDamageFunction.cs" />
     <Compile Include="Inputs\Functions\UncertainOrdinatesFunction.cs" />
     <Compile Include="Inputs\Conditions\ICondition.cs" />
+    <Compile Include="Inputs\IImapactArea.cs" />
+    <Compile Include="Inputs\ImpactArea.cs" />
     <Compile Include="Inputs\Inventories\Assets\Asset.cs" />
     <Compile Include="Inputs\Inventories\Assets\IAsset.cs" />
     <Compile Include="Inputs\Inventories\Assets\AssetSampled.cs" />
+    <Compile Include="Inputs\Inventories\IInventory.cs" />
     <Compile Include="Inputs\Inventories\Inventory.cs" />
     <Compile Include="Inputs\Inventories\InventoryElements\IInventoryElement.cs" />
     <Compile Include="Inputs\Inventories\OccupancyTypes\IOccupancyGroup.cs" />

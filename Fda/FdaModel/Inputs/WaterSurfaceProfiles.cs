@@ -4,16 +4,16 @@ using System.Collections.Generic;
 
 namespace Model.Inputs
 {
-    internal sealed class WaterSurfaceProfiles : IWaterSurfaceProfiles
+    internal abstract sealed class WaterSurfaceProfilesBase : IWaterSurfaceProfiles
     {
         #region Properties
         public bool IsValid { get; private set; }
         public double[] Probabilities { get; }
-        public Dictionary<float, Statistics.CurveIncreasing> Profiles { get; }
+        public abstract IDictionary<float, Statistics.CurveIncreasing> Profiles { get; }
         #endregion
 
         #region Constructor
-        public WaterSurfaceProfiles(Dictionary<float, Statistics.CurveIncreasing> profiles, double[] probabilities)
+        public WaterSurfaceProfilesBase(Dictionary<float, Statistics.CurveIncreasing> profiles, double[] probabilities)
         {
             Profiles = profiles;
             Probabilities = probabilities;
@@ -66,6 +66,5 @@ namespace Model.Inputs
             return messages;
         }
         #endregion
-
     }
 }
