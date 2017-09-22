@@ -16,8 +16,8 @@ namespace Model.Inputs.Conditions
         IList<IFunctionCompose> FrequencyFunctions { get; }
         IList<IFunctionTransform> TransformFunctions { get; }
         IList<ComputePoint> ComputePoints { get; }
-        IList<Tuple<ComputePoint, double>> Metrics { get; }
-        void Compute(int seed);
+        IDictionary<ComputePointUnitTypeEnum, double[]> MetricsRange { get; }
+        IDictionary<ComputePointUnitTypeEnum, double> Compute(int seed);
 
     }
 }

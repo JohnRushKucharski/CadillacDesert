@@ -9,5 +9,6 @@ namespace Model.Inputs.Functions
         ComputationPointFunctionEnum Type { get; }
         IList<Tuple<double, double>> Ordinates { get; }
         IFunctionTransform Sample(double probability);
+        //double GetYFromX(double x);
     }
 }

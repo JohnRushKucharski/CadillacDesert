@@ -29,7 +29,7 @@ namespace Model.Inputs.Conditions
         public IList<IFunctionCompose> FrequencyFunctions { get; private set; }
         public IList<IFunctionTransform> TransformFunctions { get; }
         public IList<ComputePoint> ComputePoints { get; }
-        public IList<Tuple<ComputePoint, double>> Metrics { get; private set; }
+        public IDictionary<ComputePointUnitTypeEnum, double[]> MetricsRange { get; private set; }
         public bool IsValid
         {
             get
@@ -51,9 +51,8 @@ namespace Model.Inputs.Conditions
             EntryPoint = frequencyFunction;
             FrequencyFunctions = new List<IFunctionCompose>() { frequencyFunction };
             TransformFunctions = transformFunctions.OrderBy(i => i.Type).ToList();
-            ComputePoints = (IList<ComputePoint>)computePoints.OrderBy(i => i.ComputePointFunction).ToList();
-            Metrics = new List<Tuple<ComputePoint, double>>();
-            ReportValidationErrors();
+            ComputePoints = computePoints.OrderBy(i => i.ComputePointFunction).ToList();
+            Validate();
         }
         #endregion
 
@@ -71,31 +70,91 @@ namespace Model.Inputs.Conditions
         //    if (hasErrors == true) ReportValidationErrors();
         //    return new ReadOnlyCollection<ComputationPointFunctionEnum>(computableList);
         //}
-        
-        #endregion
+        private bool RunTestCompute(int nTests = 100)
+        {
+            InitializeMetricsRange();
+            try
+            {
+                SetMetricRange(InnerCompute(GenerateTestProbabilities(TransformFunctions.Count * 2)), true);
 
-        public void TestCompute()
-        {
-            double[] testProbability = new double[] {0.0001, 0.9999 };
-            throw new NotImplementedException();
+                for (int i = 1; i < nTests; i++)
+                {
+                    SetMetricRange(InnerCompute(GenerateTestProbabilities(TransformFunctions.Count * 2)), false);
+                }
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
         }
-        public void Compute(int seed)
+        private void InitializeMetricsRange()
         {
-            int j = 0, J = ComputePoints.Count;
-            Random numberGenerator = new Random(seed);
+            MetricsRange = new Dictionary<ComputePointUnitTypeEnum, double[]>();
+            for (int i = 0; i < ComputePoints.Count; i++) MetricsRange.Add(ComputePoints[i].Unit, new double[2]);
+        }
+        private double[] GenerateTestProbabilities(int nPs)
+        {
+            Random random = new Random();
+            int N = TransformFunctions.Count * 2;
+            double[] samplePs = new double[N], testPs = new double[2] { 0.0001, 0.9999 };
+            for (int n = 0; n < N; n++)
+            {
+                if (random.NextDouble() < 0.5) samplePs[n] = testPs[0];
+                else samplePs[n] = testPs[1];
+            }
+            return samplePs;
+        }
+        private void SetMetricRange(IDictionary<ComputePointUnitTypeEnum, double> result, bool firstPass)
+        {
+            if (firstPass == false)
+            {
+                foreach (var metric in result)
+                {
+                  
+                    Math.Min(MetricsRange[metric.Key][0], metric.Value);
+                    Math.Max(MetricsRange[metric.Key][0], metric.Value);
+                }
+            }
+            else
+            {
+                foreach (var metric in result)
+                {
+                    MetricsRange[metric.Key][0] = metric.Value;
+                    MetricsRange[metric.Key][1] = metric.Value;
+                }    
+            }
+        }
+
+        public IDictionary<ComputePointUnitTypeEnum, double> Compute(int seed)
+        { 
+            Random numberGenerator = new Random();
+            int N = TransformFunctions.Count * 2; double[] randoms = new double[N];
+            for (int i = 0; i < N; i++) randoms[i] = numberGenerator.NextDouble();
+            return InnerCompute(randoms);
+        }
+        private IDictionary<ComputePointUnitTypeEnum, double> InnerCompute(double[] samplePs)
+        {
+            int j = 0, J = ComputePoints.Count, n;
+            IDictionary<ComputePointUnitTypeEnum, double> metrics = new Dictionary<ComputePointUnitTypeEnum, double>();
             for (int i = 0; i < TransformFunctions.Count; i++)
             {
-                FrequencyFunctions.Add(FrequencyFunctions[i].Compose(TransformFunctions[i], numberGenerator.NextDouble(), numberGenerator.NextDouble()));
+                n = i * 2;
+                FrequencyFunctions.Add(FrequencyFunctions[i].Compose(TransformFunctions[i], samplePs[n], samplePs[n + 1]));
                 while (FrequencyFunctions[FrequencyFunctions.Count - 1].Type == ComputePoints[j].ComputePointFunction)
                 {
                     if (ComputePoints[j].Unit < ComputePointUnitTypeEnum.ExpectedAnnualDamage)
-                        Metrics.Add(new Tuple<ComputePoint, double>(ComputePoints[j], FrequencyFunctions[FrequencyFunctions.Count - 1].GetXFromY(ComputePoints[j].Value)));
+                        metrics.Add(ComputePoints[j].Unit, FrequencyFunctions[FrequencyFunctions.Count - 1].GetXFromY(ComputePoints[j].Value));
                     else
-                        Metrics.Add(new Tuple<ComputePoint, double>(ComputePoints[j], FrequencyFunctions[FrequencyFunctions.Count - 1].Integrate()));
-                    if (j + 1 == J) return; else j++;
+                        metrics.Add(ComputePoints[j].Unit, FrequencyFunctions[FrequencyFunctions.Count - 1].Integrate());
+                    if (j + 1 == J) break;
+                    else j++;
                 }
             }
+            return metrics;
         }
+        #endregion
+
         #region IValidate Members
         public bool Validate()
         {
@@ -128,9 +187,9 @@ namespace Model.Inputs.Conditions
                     ReportComputePointErrors(); break;
                 }
             }
+            if (isValid == true) if (!(RunTestCompute() == true)) isValid = false;
             return isValid;
         }
-
         public IEnumerable<string> ReportValidationErrors()
         {
             IsValid = true;

@@ -9,5 +9,6 @@ namespace Model.Inputs.Functions.ComputationPoint
     public interface IStageDamageTransform: IFunctionTransform
     {
         IStageDamageTransform Aggregate(IStageDamageTransform toAdd);
+        double GetYFromX(double x);
     }
 }

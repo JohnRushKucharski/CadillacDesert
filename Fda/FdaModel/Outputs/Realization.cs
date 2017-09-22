@@ -20,12 +20,14 @@ namespace Model.Outputs
         public IList<int> IterationSeedContainer { get; private set; } = new List<int>();
         public Statistics.Histogram Aep { get; private set; } = new Statistics.Histogram(50, 0.5, 0.001, false);
         public Statistics.Histogram Ead { get; private set; } = new Statistics.Histogram(50, 0, 1000000, false);
+        public IDictionary<ComputePointUnitTypeEnum, Statistics.Histogram> Metrics;
         #endregion
 
         #region Constructor
         public Realization(ICondition condition)
         {
             Condition = condition;
+            Metrics = new Dictionary<ComputePointUnitTypeEnum, Statistics.Histogram>();
         }
         #endregion
 
@@ -52,7 +54,21 @@ namespace Model.Outputs
                 });
             }
         }
-
+        private IDictionary<ComputePointUnitTypeEnum, Statistics.Histogram> InitializeMetrics()
+        {
+            Metrics = new Dictionary<ComputePointUnitTypeEnum, Statistics.Histogram>();
+            foreach (var point in Condition.ComputePoints)
+            {
+                Metrics.Add(point.Unit, new Statistics.Histogram(50, ))
+            }
+        }
+        private void AddMetricsTestConvergence()
+        {
+            foreach (var metric in Condition.Metrics)
+            {
+                if (Metrics.ContainsKey(metric.Key)) Metrics[metric.Key] = 
+            }
+        }
         #endregion
     }
 }

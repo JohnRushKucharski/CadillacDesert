@@ -110,14 +110,6 @@
     </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>
-  <Class Name="Model.Inputs.Functions.ComputationPoint.InteriorStageDamage">
-    <Position X="18.75" Y="6" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAABAACAAAAAAAQAAAAAAAAA=</HashCode>
-      <FileName>Inputs\Functions\ComputationPoint\InteriorStageDamage.cs</FileName>
-    </TypeIdentifier>
-    <Lollipop Position="0.2" />
-  </Class>
   <Class Name="Model.Inputs.Functions.ComputationPoint.DamageFrequency">
     <Position X="20.5" Y="6" Width="1.5" />
     <TypeIdentifier>
@@ -125,6 +117,13 @@
       <FileName>Inputs\Functions\ComputationPoint\DamageFrequency.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Model.Inputs.Functions.ComputationPoint.InteriorStageDamage">
+    <Position X="18.75" Y="6" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAEAAAAAAAAAAAAAABAACAAAAAAAQAAAAAAAAA=</HashCode>
+      <FileName>Inputs\Functions\ComputationPoint\InteriorStageDamage.cs</FileName>
+    </TypeIdentifier>
   </Class>
   <Interface Name="Model.Inputs.Functions.IFunctionBase">
     <Position X="0.5" Y="0.5" Width="1.5" />
